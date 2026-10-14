@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Mengenlehre 3 Sets - Тренажер</title>
+    <title>Set Theory Trainer - 3 Sets</title>
     <style>
         body {
             font-family: sans-serif;
@@ -42,60 +42,50 @@
 <body>
 
     <div class="task-container">
-        <h2 id="task-name">Закрасьте область для формулы:</h2>
-        <div class="formula" id="task-formula">Генерация...</div>
+        <h2 id="task-name">Shade the region for the formula:</h2>
+        <div class="formula" id="task-formula">Generating...</div>
     </div>
 
     <svg viewBox="0 0 300 300" width="400" height="400" id="venn-svg">
         <defs>
-            <!-- Определяем базовые круги -->
             <circle id="circA" cx="120" cy="120" r="70" />
             <circle id="circB" cx="180" cy="120" r="70" />
             <circle id="circC" cx="150" cy="172" r="70" />
 
-            <!-- Технические клип-пути для пересечений -->
             <clipPath id="clipA"><circle cx="120" cy="120" r="70" /></clipPath>
             <clipPath id="clipB"><circle cx="180" cy="120" r="70" /></clipPath>
             <clipPath id="clipC"><circle cx="150" cy="172" r="70" /></clipPath>
 
-            <!-- Создаем маски для 7 зон пересечений -->
-            <!-- Только A (A \ B \ C) -->
             <mask id="m-a">
                 <use href="#circA" fill="white" />
                 <use href="#circB" fill="black" />
                 <use href="#circC" fill="black" />
             </mask>
-            <!-- Только B (B \ A \ C) -->
             <mask id="m-b">
                 <use href="#circB" fill="white" />
                 <use href="#circA" fill="black" />
                 <use href="#circC" fill="black" />
             </mask>
-            <!-- Только C (C \ A \ B) -->
             <mask id="m-c">
                 <use href="#circC" fill="white" />
                 <use href="#circA" fill="black" />
                 <use href="#circB" fill="black" />
             </mask>
-            <!-- A ∩ B \ C -->
             <mask id="m-ab">
                 <rect width="100%" height="100%" fill="black" />
                 <use href="#circA" fill="white" clip-path="url(#clipB)" />
                 <use href="#circC" fill="black" />
             </mask>
-            <!-- A ∩ C \ B -->
             <mask id="m-ac">
                 <rect width="100%" height="100%" fill="black" />
                 <use href="#circA" fill="white" clip-path="url(#clipC)" />
                 <use href="#circB" fill="black" />
             </mask>
-            <!-- B ∩ C \ A -->
             <mask id="m-bc">
                 <rect width="100%" height="100%" fill="black" />
                 <use href="#circB" fill="white" clip-path="url(#clipC)" />
                 <use href="#circA" fill="black" />
             </mask>
-            <!-- A ∩ B ∩ C -->
             <mask id="m-abc">
                 <rect width="100%" height="100%" fill="black" />
                 <g clip-path="url(#clipC)">
@@ -104,7 +94,6 @@
             </mask>
         </defs>
 
-        <!-- Отрисовка зон: фон (Универсум) и 7 маскированных прямоугольников -->
         <rect id="region-u" x="5" y="5" width="290" height="290" rx="10" fill="#e0e0e0" stroke="#333" stroke-width="2" />
         
         <rect id="region-a" width="300" height="300" fill="#e0e0e0" mask="url(#m-a)" />
@@ -115,12 +104,10 @@
         <rect id="region-bc" width="300" height="300" fill="#e0e0e0" mask="url(#m-bc)" />
         <rect id="region-abc" width="300" height="300" fill="#e0e0e0" mask="url(#m-abc)" />
 
-        <!-- Границы кругов (чтобы они всегда были четкими) -->
         <use href="#circA" fill="none" stroke="#333" stroke-width="2" />
         <use href="#circB" fill="none" stroke="#333" stroke-width="2" />
         <use href="#circC" fill="none" stroke="#333" stroke-width="2" />
 
-        <!-- Подписи -->
         <text x="80" y="80" font-size="20" font-weight="bold" pointer-events="none">A</text>
         <text x="210" y="80" font-size="20" font-weight="bold" pointer-events="none">B</text>
         <text x="143" y="260" font-size="20" font-weight="bold" pointer-events="none">C</text>
@@ -128,21 +115,18 @@
     </svg>
 
     <div class="controls">
-        <button id="check-btn">Проверить</button>
-        <button id="next-btn" style="display: none;">Сгенерировать новую задачу</button>
+        <button id="check-btn">Check</button>
+        <button id="next-btn" style="display: none;">Generate new task</button>
     </div>
 
     <script>
-        // --- 1. ГЕНЕРАТОР СЛУЧАЙНЫХ ЗАДАЧ ---
         function generateTask() {
-            // Перемешиваем переменные для разнообразия
             const vars = ['A', 'B', 'C'].sort(() => 0.5 - Math.random());
             const ops = ['∪', '∩', '\\', 'Δ'];
 
             const op1 = ops[Math.floor(Math.random() * ops.length)];
             const op2 = ops[Math.floor(Math.random() * ops.length)];
 
-            // С вероятностью 30% делаем дополнение (инверсию)
             const comp = v => Math.random() > 0.7 ? `${v}^c` : v;
             const v1 = comp(vars[0]);
             const v2 = comp(vars[1]);
@@ -151,7 +135,6 @@
             let formula = '';
             let evaluate = null;
 
-            // Базовая математическая логика операций
             const applyOp = (val1, val2, op) => {
                 if (op === '∪') return val1 || val2;
                 if (op === '∩') return val1 && val2;
@@ -165,7 +148,6 @@
                 return vStr.includes('^c') ? !val : val;
             };
 
-            // Случайно выбираем структуру скобок: (X op Y) op Z  ИЛИ  X op (Y op Z)
             if (Math.random() > 0.5) {
                 formula = `(${v1} ${op1} ${v2}) ${op2} ${v3}`;
                 evaluate = (a, b, c) => {
@@ -178,7 +160,6 @@
                 };
             }
 
-            // Глобальное дополнение (Законы де Моргана)
             if (Math.random() > 0.8) {
                 formula = `(${formula})^c`;
                 const oldEval = evaluate;
@@ -188,30 +169,24 @@
             return { formula, evaluate };
         }
 
-        // --- 2. ЛОГИКА СОСТОЯНИЙ И КЛИКОВ (ГЕОМЕТРИЯ) ---
         let state = { u: false, a: false, b: false, c: false, ab: false, ac: false, bc: false, abc: false };
         let currentTask = null;
 
         const svg = document.getElementById('venn-svg');
 
-        // Функция математического определения зоны под курсором
         function getRegion(e) {
-            // Переводим пиксели экрана во внутренние координаты SVG
             const pt = svg.createSVGPoint();
             pt.x = e.clientX;
             pt.y = e.clientY;
             const cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
 
-            // Исключаем клики за пределами рамки Универсума
             if (cursor.x < 5 || cursor.x > 295 || cursor.y < 5 || cursor.y > 295) return null;
 
-            const r = 70; // Радиус кругов
-            // Теорема Пифагора: проверяем, находится ли курсор внутри каждого из кругов
+            const r = 70;
             const inA = Math.hypot(cursor.x - 120, cursor.y - 120) <= r;
             const inB = Math.hypot(cursor.x - 180, cursor.y - 120) <= r;
             const inC = Math.hypot(cursor.x - 150, cursor.y - 172) <= r;
 
-            // Возвращаем ID конкретной зоны
             if (!inA && !inB && !inC) return 'u';
             if (inA && !inB && !inC) return 'a';
             if (!inA && inB && !inC) return 'b';
@@ -223,7 +198,6 @@
             return null;
         }
 
-        // Отрисовка цветов с поддержкой эффекта наведения (hover)
         function updateVisuals(hoveredRegion = null) {
             Object.keys(state).forEach(id => {
                 const rect = document.getElementById(`region-${id}`);
@@ -231,26 +205,23 @@
                 const isHovered = id === hoveredRegion;
                 
                 if (isActive) {
-                    rect.setAttribute('fill', isHovered ? '#3a7bc2' : '#4a90e2'); // Синий / Темно-синий
+                    rect.setAttribute('fill', isHovered ? '#3a7bc2' : '#4a90e2');
                 } else {
-                    rect.setAttribute('fill', isHovered ? '#c0c0c0' : '#e0e0e0'); // Серый / Светло-серый
+                    rect.setAttribute('fill', isHovered ? '#c0c0c0' : '#e0e0e0');
                 }
             });
         }
 
-        // Обработка клика
         svg.addEventListener('click', (e) => {
             const regionId = getRegion(e);
             if (!regionId) return;
-            state[regionId] = !state[regionId]; // Переключаем true/false
+            state[regionId] = !state[regionId];
             updateVisuals(regionId);
         });
 
-        // Обработка движения мыши для имитации CSS :hover
         svg.addEventListener('mousemove', (e) => updateVisuals(getRegion(e)));
         svg.addEventListener('mouseleave', () => updateVisuals(null));
 
-        // --- 3. ИНТЕРФЕЙС И ПРОВЕРКА ---
         const taskFormulaEl = document.getElementById('task-formula');
         const checkBtn = document.getElementById('check-btn');
         const nextBtn = document.getElementById('next-btn');
@@ -259,7 +230,6 @@
             currentTask = generateTask();
             taskFormulaEl.textContent = currentTask.formula;
             
-            // Сбрасываем все выделения
             Object.keys(state).forEach(key => state[key] = false);
             updateVisuals();
             
@@ -268,7 +238,6 @@
         }
 
         checkBtn.addEventListener('click', function() {
-            // Сверяем все 8 зон: evaluate(A, B, C)
             const correct = {
                 u: currentTask.evaluate(false, false, false),
                 a: currentTask.evaluate(true, false, false),
@@ -280,15 +249,14 @@
                 abc: currentTask.evaluate(true, true, true)
             };
 
-            // Проверяем, совпадает ли текущий стейт с правильным ответом
             const isCorrect = Object.keys(state).every(key => state[key] === correct[key]);
 
             if (isCorrect) {
-                alert('Верно! Вы отлично разбираетесь в операциях с множествами.');
+                alert('Correct! Great job with set operations.');
                 checkBtn.style.display = 'none';
                 nextBtn.style.display = 'inline-block';
             } else {
-                alert('Ошибка. Проанализируйте формулу еще раз: с какой операции нужно начать, учитывая скобки?');
+                alert('Incorrect. Analyze the formula again: which operation should you start with, considering the parentheses?');
             }
         });
 
