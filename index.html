@@ -105,7 +105,7 @@ h1 {
 /* Bereiche */
 .tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; }
 .tab {
-  display: grid; gap: 2px; align-content: start; min-width: 0;
+  display: grid; grid-template-rows: auto 1fr auto; gap: 2px; min-width: 0;
   padding: 10px 12px;
   border: 1.5px solid var(--line);
   border-radius: 10px;
@@ -115,7 +115,7 @@ h1 {
 }
 .tab:hover { border-color: var(--accent); }
 .tab .code { font-size: .74rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
-.tab .name { font-weight: 700; line-height: 1.25; }
+.tab .name { font-weight: 700; line-height: 1.25; hyphens: auto; overflow-wrap: anywhere; }
 .tab .best { font-size: .78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .tab[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .tab[aria-current="page"] .code, .tab[aria-current="page"] .best { color: inherit; opacity: .85; }
