@@ -1,268 +1,1355 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <title>Set Theory Trainer - 3 Sets</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 40px;
-        }
-        .task-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .formula {
-            font-size: 26px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            background: #f4f4f4;
-            padding: 15px 30px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-        .controls {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        svg {
-            cursor: pointer;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<title>Mengenlehre-Trainer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Übungsaufgaben im Format der eTrainings 1.1-1 bis 1.1-3 (Mengenlehre) mit immer neuen Zahlen, Musterlösung und Erklärung.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Noto+Sans+Math&family=STIX+Two+Text:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+/* Layout: eine Lesespalte auf hellgrauem Karopapier, jede Aufgabe ist ein Blatt darauf */
+:root {
+  --paper: #eceef1;
+  --grid: #e1e4e9;
+  --sheet: #ffffff;
+  --ink: #18213a;
+  --muted: #5a6273;
+  --line: #d5d9e0;
+  --accent: #2944c4;
+  --accent-ink: #ffffff;
+  --accent-soft: #e8ecff;
+  --ok: #1b7a47;
+  --ok-soft: #e2f3e9;
+  --bad: #c2372a;
+  --bad-soft: #fbe6e3;
+  --part: #985f00;
+  --part-soft: #fbefd6;
+  --venn: #7fa6e3;
+  --venn-green: #5bc260;
+  --venn-line: #18213a;
+  --shadow: rgba(24, 33, 58, .16);
+  --f-display: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-math: "STIX Two Text", "Noto Sans Math", "Cambria Math", "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #17191d; --grid: #1f2228; --sheet: #202329; --ink: #e8eaef; --muted: #a0a6b3; --line: #343842;
+    --accent: #93a5ff; --accent-ink: #0e1222; --accent-soft: #222b4b;
+    --ok: #63d398; --ok-soft: #15301f; --bad: #ff8b7c; --bad-soft: #3a1c19; --part: #f0b955; --part-soft: #33290f;
+    --venn: #3e63a8; --venn-green: #2e8b47; --venn-line: #e8eaef; --shadow: rgba(0, 0, 0, .45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #17191d; --grid: #1f2228; --sheet: #202329; --ink: #e8eaef; --muted: #a0a6b3; --line: #343842;
+  --accent: #93a5ff; --accent-ink: #0e1222; --accent-soft: #222b4b;
+  --ok: #63d398; --ok-soft: #15301f; --bad: #ff8b7c; --bad-soft: #3a1c19; --part: #f0b955; --part-soft: #33290f;
+  --venn: #3e63a8; --venn-green: #2e8b47; --venn-line: #e8eaef; --shadow: rgba(0, 0, 0, .45);
+  color-scheme: dark;
+}
+
+[hidden] { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 20px;
+}
+
+/* Kopf */
+.brand { display: flex; gap: 16px; align-items: flex-start; }
+.logo {
+  flex: none;
+  font-family: var(--f-math);
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--accent);
+  background: var(--sheet);
+  border: 1.5px solid var(--ink);
+  border-radius: 12px;
+  padding: .4rem .55rem .5rem;
+}
+h1 {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(1.9rem, 5.5vw, 2.7rem);
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  margin: 0;
+  text-wrap: balance;
+}
+.lede { margin: .5rem 0 0; color: var(--muted); max-width: 62ch; }
+
+/* Bereiche */
+.tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; }
+.tab {
+  display: grid; gap: 2px; align-content: start; min-width: 0;
+  padding: 10px 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--sheet);
+  color: var(--ink);
+  text-decoration: none;
+}
+.tab:hover { border-color: var(--accent); }
+.tab .code { font-size: .74rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tab .name { font-weight: 700; line-height: 1.25; }
+.tab .best { font-size: .78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tab[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tab[aria-current="page"] .code, .tab[aria-current="page"] .best { color: inherit; opacity: .85; }
+
+/* Fortschritt */
+.roundbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; font-variant-numeric: tabular-nums; }
+.rb-text { display: flex; gap: 14px; font-weight: 700; }
+.rb-score { color: var(--muted); font-weight: 400; }
+.dots { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; flex: 1 1 160px; min-width: 0; }
+.dots li { flex: 1; max-width: 44px; height: 8px; border-radius: 4px; background: var(--line); }
+.dots li.cur { background: var(--ink); }
+.dots li.ok { background: var(--ok); }
+.dots li.part { background: var(--part); }
+.dots li.bad { background: var(--bad); }
+
+/* Knöpfe */
+.btn {
+  font: inherit; font-weight: 700;
+  border-radius: 8px; padding: .6rem 1.15rem;
+  border: 1.5px solid transparent; cursor: pointer;
+}
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.ghost:hover { border-color: var(--accent); }
+.btn.small { padding: .35rem .8rem; font-size: .9rem; }
+.btn:focus-visible, .tab:focus-visible, summary:focus-visible, select:focus-visible, input:focus-visible, .opt:focus-within, .chip:focus-visible, .dnd-item:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px;
+}
+
+/* Aufgabenblatt */
+.sheet {
+  background: var(--sheet);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: clamp(18px, 4vw, 30px);
+  box-shadow: 0 14px 34px -22px var(--shadow);
+  min-width: 0;
+}
+.q-meta { display: flex; justify-content: space-between; gap: 6px 12px; flex-wrap: wrap; font-size: .85rem; color: var(--muted); }
+.eyebrow { text-transform: uppercase; letter-spacing: .08em; font-weight: 700; font-size: .76rem; color: var(--accent); }
+h2 { font-family: var(--f-display); font-weight: 800; font-size: 1.55rem; line-height: 1.2; margin: .35rem 0 .7rem; letter-spacing: -.01em; text-wrap: balance; }
+h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.12rem; margin: 1.2rem 0 .45rem; }
+.givens { font-family: var(--f-math); font-size: 1.12rem; display: flex; flex-wrap: wrap; gap: .25rem 1.8rem; margin: 0 0 .8rem; }
+.givens-label { font-family: var(--f-body); font-size: 1rem; flex-basis: 100%; }
+.prompt { margin: 0 0 1rem; }
+.prompt p { margin: 0 0 .6rem; }
+.notice { background: var(--accent-soft); border-radius: 10px; padding: 8px 12px; font-size: .92rem; }
+.m { font-family: var(--f-math); font-size: 1.1em; }
+.m i, .givens i { font-style: italic; }
+.big-m { font-size: 1.35rem; }
+.frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .8em; line-height: 1.15; margin: 0 .08em; }
+.frac > span:first-child { border-bottom: 1px solid currentColor; padding: 0 .15em; }
+.rad { border-top: 1px solid currentColor; padding: 0 .08em; }
+.ov, .bar { text-decoration: overline; }
+.nest { display: block; width: 100%; max-width: 280px; height: auto; margin: 0 0 .8rem; }
+.nest ellipse { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+.nest text { fill: var(--ink); font-family: var(--f-math); font-size: 17px; }
+
+/* Zeilen mit Auswahl */
+.rows { display: grid; gap: 8px; }
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "label ctl" "mark mark";
+  align-items: center;
+  gap: 6px 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.row-label { grid-area: label; min-width: 0; }
+.row .ctl { grid-area: ctl; min-width: 0; }
+.mark { grid-area: mark; font-size: .92rem; }
+.mark:empty { display: none; }
+.row.is-ok { border-color: var(--ok); background: var(--ok-soft); }
+.row.is-bad { border-color: var(--bad); background: var(--bad-soft); }
+@media (max-width: 540px) {
+  .row { grid-template-columns: minmax(0, 1fr); grid-template-areas: "label" "ctl" "mark"; }
+}
+select, input[type="text"] {
+  font: inherit; color: var(--ink); background: var(--sheet);
+  border: 1.5px solid var(--line); border-radius: 8px;
+  padding: .45rem .6rem; max-width: 100%;
+}
+input[type="text"] { width: 15rem; }
+input.wide { width: 18rem; }
+.tick { color: var(--ok); font-weight: 700; }
+.cross { color: var(--bad); font-weight: 700; margin-right: .4rem; }
+
+/* Kprim: vier Aussagen, je richtig oder falsch */
+table.kprim { border-collapse: collapse; }
+table.kprim th { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); text-align: center; padding: 4px 10px; font-weight: 700; }
+table.kprim td { padding: 9px 10px; border-top: 1px solid var(--line); }
+table.kprim td.c { text-align: center; width: 4.8rem; }
+table.kprim input { width: 1.1rem; height: 1.1rem; accent-color: var(--accent); margin: 0; }
+table.kprim tr.is-ok td { background: var(--ok-soft); }
+table.kprim tr.is-bad td { background: var(--bad-soft); }
+table.kprim .mark { display: block; margin-top: 2px; }
+table.kprim .mark:empty { display: none; }
+
+/* Zuordnen per Ziehen */
+.dnd { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; }
+.dnd-term { display: grid; gap: 8px; padding: 10px 12px; background: var(--paper); border: 1.5px solid var(--line); border-radius: 8px; }
+.dnd-slot { min-height: 2.6rem; display: flex; align-items: center; padding: 6px 12px; border: 1.5px dashed var(--muted); border-radius: 8px; color: var(--muted); background: var(--sheet); }
+.dnd-slot.filled { border-style: solid; border-color: var(--accent); color: var(--ink); }
+.dnd-slot.over { border-color: var(--accent); background: var(--accent-soft); }
+.dnd-pool { display: grid; gap: 8px; }
+.dnd-item { font: inherit; text-align: left; padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--sheet); color: var(--ink); cursor: grab; }
+.dnd-item.used { opacity: .45; }
+.dnd-item:disabled { cursor: default; }
+.dnd.is-ok { border-color: var(--ok); background: var(--ok-soft); }
+.dnd.is-bad { border-color: var(--bad); background: var(--bad-soft); }
+
+/* Einfachauswahl */
+.mc { display: grid; gap: 8px; }
+.mc-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); }
+.opt {
+  display: flex; gap: 12px; align-items: center; min-width: 0;
+  padding: 10px 12px;
+  border: 1.5px solid var(--line); border-radius: 10px;
+  cursor: pointer;
+}
+.opt:hover { border-color: var(--accent); }
+.opt input { accent-color: var(--accent); width: 1.1rem; height: 1.1rem; flex: none; margin: 0; }
+.opt-body { min-width: 0; overflow-wrap: anywhere; }
+.opt:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.opt.is-ok { border-color: var(--ok); background: var(--ok-soft); }
+.opt.is-bad { border-color: var(--bad); background: var(--bad-soft); }
+canvas.venn { display: block; width: 100%; max-width: 260px; height: auto; }
+canvas.venn.sm { max-width: 180px; }
+.figure { margin: 0 0 1rem; }
+.figure canvas.venn { max-width: 300px; }
+
+/* Selbst ausmalen */
+.shade { display: grid; gap: 12px; justify-items: start; }
+.shade canvas.venn { max-width: 340px; cursor: pointer; touch-action: manipulation; }
+.shade-keys { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font: inherit; font-size: .88rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  border: 1.5px solid var(--line); background: var(--sheet); color: var(--ink);
+  cursor: pointer;
+}
+.chip[aria-pressed="true"] { background: var(--venn-green); border-color: var(--ok); }
+.chip:disabled { cursor: default; }
+
+/* Rückmeldung */
+.hint { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; margin: 14px 0 0; }
+.actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+.feedback { margin-top: 20px; border-top: 1.5px dashed var(--line); padding-top: 16px; }
+.verdict { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px 12px; padding: 10px 14px; border-radius: 10px; font-variant-numeric: tabular-nums; }
+.v-ok { background: var(--ok-soft); color: var(--ok); }
+.v-part { background: var(--part-soft); color: var(--part); }
+.v-bad { background: var(--bad-soft); color: var(--bad); }
+.expl { margin: .3rem 0; padding-left: 1.2rem; display: grid; gap: 5px; }
+.solution p { margin: .4rem 0; }
+.steps { display: flex; flex-wrap: wrap; gap: 18px; margin: .4rem 0; }
+.step { margin: 0; display: grid; gap: 6px; justify-items: start; }
+.step figcaption { font-size: .92rem; }
+.tbl-wrap { overflow-x: auto; }
+table.check { border-collapse: collapse; font-variant-numeric: tabular-nums; margin: .3rem 0; }
+table.check th, table.check td { padding: 4px 16px 4px 0; text-align: left; border-bottom: 1px solid var(--line); }
+table.check th { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.yes { color: var(--ok); font-weight: 700; }
+.no { color: var(--bad); font-weight: 700; }
+
+/* Auswertung */
+.score { font-family: var(--f-display); font-size: 1.3rem; margin: .3rem 0 .2rem; font-variant-numeric: tabular-nums; }
+.score .big { font-size: 3.6rem; font-weight: 800; letter-spacing: -.03em; margin-right: .3rem; }
+.review { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 6px; }
+.review li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); }
+.review .r-topic { grid-column: 1; color: var(--muted); font-size: .85rem; }
+.review .r-pts { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-weight: 700; font-variant-numeric: tabular-nums; padding: .1rem .55rem; border-radius: 999px; }
+.r-ok .r-pts { background: var(--ok-soft); color: var(--ok); }
+.r-part .r-pts { background: var(--part-soft); color: var(--part); }
+.r-bad .r-pts { background: var(--bad-soft); color: var(--bad); }
+
+/* Spickzettel und Tipps */
+.cheat summary { cursor: pointer; font-family: var(--f-display); font-weight: 800; font-size: 1.2rem; }
+.cheat-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 4px 28px; margin-top: 10px; }
+.cheat h4, .tips h2 { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; margin: .8rem 0 .3rem; }
+.tips h2 { font-size: 1.2rem; font-weight: 800; margin-top: 0; }
+.cheat ul, .tips ul { margin: 0; padding-left: 1.2rem; display: grid; gap: 5px; }
+footer { color: var(--muted); font-size: .85rem; }
+footer a { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+</style>
 </head>
 <body>
-
-    <div class="task-container">
-        <h2 id="task-name">Shade the region for the formula:</h2>
-        <div class="formula" id="task-formula">Generating...</div>
+<div class="page">
+  <header class="brand">
+    <span class="logo" aria-hidden="true">{∈}</span>
+    <div>
+      <h1>Mengenlehre-Trainer</h1>
+      <p class="lede">Übungsaufgaben im Format der eTrainings 1.1-1 bis 1.1-3: gleiche Aufgabentypen, gleiche Bewertung, aber jedes Mal neue Zahlen und Mengen. Nach jeder Antwort gibt es die Musterlösung mit Erklärung.</p>
     </div>
+  </header>
 
-    <svg viewBox="0 0 300 300" width="400" height="400" id="venn-svg">
-        <defs>
-            <circle id="circA" cx="120" cy="120" r="70" />
-            <circle id="circB" cx="180" cy="120" r="70" />
-            <circle id="circC" cx="150" cy="172" r="70" />
+  <nav class="tabs" id="tabs" aria-label="Übungsbereiche"></nav>
 
-            <clipPath id="clipA"><circle cx="120" cy="120" r="70" /></clipPath>
-            <clipPath id="clipB"><circle cx="180" cy="120" r="70" /></clipPath>
-            <clipPath id="clipC"><circle cx="150" cy="172" r="70" /></clipPath>
+  <div class="roundbar">
+    <div class="rb-text"><span id="rbCount">Frage 1 von 8</span><span class="rb-score" id="rbScore">0 Punkte</span></div>
+    <ol class="dots" id="dots" aria-hidden="true"></ol>
+    <button type="button" class="btn ghost small" id="newRound">Neue Runde</button>
+  </div>
 
-            <mask id="m-a">
-                <use href="#circA" fill="white" />
-                <use href="#circB" fill="black" />
-                <use href="#circC" fill="black" />
-            </mask>
-            <mask id="m-b">
-                <use href="#circB" fill="white" />
-                <use href="#circA" fill="black" />
-                <use href="#circC" fill="black" />
-            </mask>
-            <mask id="m-c">
-                <use href="#circC" fill="white" />
-                <use href="#circA" fill="black" />
-                <use href="#circB" fill="black" />
-            </mask>
-            <mask id="m-ab">
-                <rect width="100%" height="100%" fill="black" />
-                <use href="#circA" fill="white" clip-path="url(#clipB)" />
-                <use href="#circC" fill="black" />
-            </mask>
-            <mask id="m-ac">
-                <rect width="100%" height="100%" fill="black" />
-                <use href="#circA" fill="white" clip-path="url(#clipC)" />
-                <use href="#circB" fill="black" />
-            </mask>
-            <mask id="m-bc">
-                <rect width="100%" height="100%" fill="black" />
-                <use href="#circB" fill="white" clip-path="url(#clipC)" />
-                <use href="#circA" fill="black" />
-            </mask>
-            <mask id="m-abc">
-                <rect width="100%" height="100%" fill="black" />
-                <g clip-path="url(#clipC)">
-                    <use href="#circA" fill="white" clip-path="url(#clipB)" />
-                </g>
-            </mask>
-        </defs>
+  <main id="stage"></main>
 
-        <rect id="region-u" x="5" y="5" width="290" height="290" rx="10" fill="#e0e0e0" stroke="#333" stroke-width="2" />
-        
-        <rect id="region-a" width="300" height="300" fill="#e0e0e0" mask="url(#m-a)" />
-        <rect id="region-b" width="300" height="300" fill="#e0e0e0" mask="url(#m-b)" />
-        <rect id="region-c" width="300" height="300" fill="#e0e0e0" mask="url(#m-c)" />
-        <rect id="region-ab" width="300" height="300" fill="#e0e0e0" mask="url(#m-ab)" />
-        <rect id="region-ac" width="300" height="300" fill="#e0e0e0" mask="url(#m-ac)" />
-        <rect id="region-bc" width="300" height="300" fill="#e0e0e0" mask="url(#m-bc)" />
-        <rect id="region-abc" width="300" height="300" fill="#e0e0e0" mask="url(#m-abc)" />
+  <details class="sheet cheat" id="cheat">
+    <summary id="cheatTitle">Spickzettel</summary>
+    <div class="cheat-body" id="cheatBody"></div>
+  </details>
 
-        <use href="#circA" fill="none" stroke="#333" stroke-width="2" />
-        <use href="#circB" fill="none" stroke="#333" stroke-width="2" />
-        <use href="#circC" fill="none" stroke="#333" stroke-width="2" />
+  <section class="sheet tips">
+    <h2>Tipps für den Online-Test</h2>
+    <ul>
+      <li>Bei Zuordnungsaufgaben mit Ziehen musst du die Antwort wirklich in das Feld ziehen, auch wenn sie schon an der richtigen Stelle zu stehen scheint. Sonst zählt die Frage als unbeantwortet.</li>
+      <li>Bei Auswahllisten mit „---- bitte auswählen ----“ gab es im eTraining nur dann den Punkt, wenn alle Zeilen stimmten. Listen mit „(Meine Auswahl löschen)“ geben Teilpunkte. Dieser Trainer bewertet genauso.</li>
+      <li>In Zahlenfeldern nur Ziffern eintragen. Buchstaben werden als falsch gewertet.</li>
+      <li>Venn-Diagramme: erst die Klammer schraffieren, dann die äußere Operation. Eine Skizze auf Papier hilft.</li>
+      <li>Bei Mengen zählen doppelte Elemente nur einmal, und die Reihenfolge ist egal. Bei Paaren ist die Reihenfolge wichtig.</li>
+    </ul>
+  </section>
 
-        <text x="80" y="80" font-size="20" font-weight="bold" pointer-events="none">A</text>
-        <text x="210" y="80" font-size="20" font-weight="bold" pointer-events="none">B</text>
-        <text x="143" y="260" font-size="20" font-weight="bold" pointer-events="none">C</text>
-        <text x="15" y="25" font-size="16" font-style="italic" pointer-events="none">U</text>
-    </svg>
+  <footer>Die Aufgabe „Selbst ausmalen“ geht auf den <a href="https://github.com/whtr9/mengenlehre-trainer">Venn-Trainer von whtr9</a> zurück. Danke! Das <a href="venn-original.html">Original</a> ist hier weiterhin dabei.</footer>
+</div>
 
-    <div class="controls">
-        <button id="check-btn">Check</button>
-        <button id="next-btn" style="display: none;">Generate new task</button>
+<script>
+(() => {
+'use strict';
+
+/* ---------- Hilfsfunktionen ---------- */
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const sample = (a, k) => shuffle(a).slice(0, k);
+const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+const uniq = a => [...new Set(a)];
+const sortN = a => a.slice().sort((x, y) => x - y);
+const key = a => a.join(',');
+const isect = (a, b) => a.filter(x => b.includes(x));
+const diff = (a, b) => a.filter(x => !b.includes(x));
+const union = (a, b) => { const u = uniq([...a, ...b]); return typeof u[0] === 'number' ? sortN(u) : u.sort(); };
+const de = n => n.toLocaleString('de-DE', { maximumFractionDigits: 2 });
+const minus = s => String(s).replace(/-/g, '−');
+const I = s => `<i>${s}</i>`;
+const m = h => `<span class="m">${h}</span>`;
+const el = x => typeof x === 'number' ? minus(x) : (/^[a-z]$/.test(x) ? I(x) : x);
+const setH = (arr, f = el) => arr.length ? `{ ${arr.map(f).join(', ')} }` : '{ }';
+const tupleH = arr => `(${arr.map(el).join(', ')})`;
+const frac = (p, q) => `<span class="frac"><span>${p}</span><span>${q}</span></span>`;
+const sqrt = n => `√<span class="rad">${n}</span>`;
+const vars = s => s.replace(/\b([A-Z])\b/g, (_, c) => I(c));
+const pairs = (X, Y) => X.flatMap(x => Y.map(y => [x, y]));
+const pairsH = (X, Y) => `{ ${pairs(X, Y).map(([x, y]) => `(${el(x)}, ${el(y)})`).join(', ')} }`;
+const defH = (name, arr) => `<span>${I(name)} = ${setH(arr)}</span>`;
+const NUM_NOTE = '<p class="notice">Bitte nur gültige Werte eingeben. Buchstaben werden als falsch gewertet.</p>';
+
+/* ---------- Antwort-Bausteine ---------- */
+let qc = 0;
+
+function markRow(row, good, correctHtml) {
+  row.classList.add(good ? 'is-ok' : 'is-bad');
+  row.querySelector('.mark').innerHTML = good
+    ? '<span class="tick">✓ richtig</span>'
+    : `<span class="cross">✗</span>richtig wäre: ${correctHtml}`;
+}
+
+// Zeilen mit Auswahlliste; jede Zeile kann eigene Optionen haben.
+// all = true: Punkt nur, wenn alle Zeilen stimmen (wie bei den Lückentext-Fragen im eTraining)
+function selectRows(rows, options, { all = false, placeholder = '(Meine Auswahl löschen)' } = {}) {
+  const id = 'q' + (++qc);
+  const opts = r => r.options || options;
+  const html = `<div class="rows">${rows.map((r, i) => `
+    <div class="row" data-row="${i}">
+      <label class="row-label" for="${id}-${i}">${r.label}</label>
+      <select class="ctl" id="${id}-${i}">
+        <option value="">${placeholder}</option>
+        ${opts(r).map((o, k) => `<option value="${k}">${o}</option>`).join('')}
+      </select>
+      <div class="mark"></div>
+    </div>`).join('')}</div>`;
+  return {
+    html,
+    grade(root) {
+      let ok = 0;
+      rows.forEach((r, i) => {
+        const row = root.querySelector(`[data-row="${i}"]`);
+        const v = row.querySelector('select').value;
+        const good = v !== '' && +v === r.correct;
+        if (good) ok++;
+        markRow(row, good, opts(r)[r.correct]);
+      });
+      return all ? (ok === rows.length ? 1 : 0) : ok / rows.length;
+    }
+  };
+}
+
+// Kprim: vier Aussagen, je richtig oder falsch. 4 richtig = 1 Punkt, 3 richtig = ½ Punkt.
+function kprim(rows) {
+  const id = 'q' + (++qc);
+  const html = `<div class="tbl-wrap"><table class="kprim"><thead><tr><th scope="col">richtig</th><th scope="col">falsch</th><th scope="col"><span class="sr">Aussage</span></th></tr></thead><tbody>
+    ${rows.map((r, i) => `<tr data-row="${i}">
+      <td class="c"><input type="radio" name="${id}-${i}" id="${id}-${i}-0" value="0" aria-labelledby="${id}-s${i}" aria-describedby="${id}-h0"></td>
+      <td class="c"><input type="radio" name="${id}-${i}" id="${id}-${i}-1" value="1" aria-labelledby="${id}-s${i}" aria-describedby="${id}-h1"></td>
+      <td><span id="${id}-s${i}">${r.label}</span><span class="mark"></span></td></tr>`).join('')}
+    </tbody></table><span id="${id}-h0" hidden>richtig</span><span id="${id}-h1" hidden>falsch</span></div>`;
+  return {
+    html,
+    grade(root) {
+      let ok = 0;
+      rows.forEach((r, i) => {
+        const row = root.querySelector(`tr[data-row="${i}"]`);
+        const sel = row.querySelector('input:checked');
+        const good = !!sel && +sel.value === r.correct;
+        if (good) ok++;
+        markRow(row, good, r.correct ? 'falsch' : 'richtig');
+      });
+      return ok === rows.length ? 1 : ok === rows.length - 1 ? 0.5 : 0;
+    }
+  };
+}
+
+// Zahlenfelder
+function numRows(rows) {
+  const id = 'q' + (++qc);
+  const html = `<div class="rows">${rows.map((r, i) => `
+    <div class="row" data-row="${i}">
+      <label class="row-label m" for="${id}-${i}">${r.label}</label>
+      <input class="ctl" type="text" inputmode="numeric" autocomplete="off" id="${id}-${i}" placeholder="Zahl">
+      <div class="mark"></div>
+    </div>`).join('')}</div>`;
+  return {
+    html,
+    grade(root) {
+      let ok = 0;
+      rows.forEach((r, i) => {
+        const row = root.querySelector(`[data-row="${i}"]`);
+        const s = row.querySelector('input').value.trim().replace(/−/g, '-');
+        const good = /^-?\d+$/.test(s) && +s === r.answer;
+        if (good) ok++;
+        markRow(row, good, m(minus(r.answer)));
+      });
+      return ok / rows.length;
+    }
+  };
+}
+
+// Mengen als Text eingeben: „{1, 3, 5}“, „1 3 5“, „{}“ oder „∅“
+function parseSet(str) {
+  const s = str.trim();
+  if (!s) return null;
+  const nums = s.replace(/−/g, '-').match(/-?\d+/g);
+  if (!nums) return /∅|\{\s*\}|leer/i.test(s) ? [] : null;
+  return sortN(uniq(nums.map(Number)));
+}
+function setRows(rows) {
+  const id = 'q' + (++qc);
+  const html = `<div class="rows">${rows.map((r, i) => `
+    <div class="row" data-row="${i}">
+      <label class="row-label m" for="${id}-${i}">${r.label} =</label>
+      <input class="ctl wide" type="text" autocomplete="off" id="${id}-${i}" placeholder="z. B. {1, 4, 7} oder {}">
+      <div class="mark"></div>
+    </div>`).join('')}</div>`;
+  return {
+    html,
+    grade(root) {
+      let ok = 0;
+      rows.forEach((r, i) => {
+        const row = root.querySelector(`[data-row="${i}"]`);
+        const got = parseSet(row.querySelector('input').value);
+        const good = got !== null && key(got) === key(r.answer);
+        if (good) ok++;
+        markRow(row, good, m(setH(r.answer)));
+      });
+      return ok / rows.length;
+    }
+  };
+}
+
+// Einfachauswahl
+function mc(options, grid = false) {
+  const id = 'q' + (++qc);
+  const html = `<div class="mc${grid ? ' mc-grid' : ''}" role="radiogroup" aria-label="Antwortmöglichkeiten">${options.map((o, k) => `
+    <label class="opt" data-opt="${k}"><input type="radio" name="${id}" id="${id}-${k}" value="${k}"><span class="opt-body">${o.html}</span></label>`).join('')}</div>`;
+  return {
+    html,
+    grade(root) {
+      const sel = root.querySelector(`input[name="${id}"]:checked`);
+      const ci = options.findIndex(o => o.correct);
+      root.querySelector(`[data-opt="${ci}"]`).classList.add('is-ok');
+      if (sel && +sel.value !== ci) root.querySelector(`[data-opt="${sel.value}"]`).classList.add('is-bad');
+      return sel && +sel.value === ci ? 1 : 0;
+    }
+  };
+}
+
+// Zuordnen per Ziehen (oder Antippen). Ohne Zuordnung zählt die Frage als unbeantwortet.
+function dragWidget(termHtml, choices, correct) {
+  const id = 'q' + (++qc);
+  let placed = null, locked = false;
+  const html = `<div class="dnd" id="${id}">
+    <div class="dnd-term"><span>${termHtml}</span><div class="dnd-slot" data-slot>Antwort hierher ziehen</div></div>
+    <div class="dnd-pool">${choices.map((c, k) => `<button type="button" class="dnd-item" draggable="true" data-k="${k}">${c}</button>`).join('')}</div>
+    <div class="mark"></div>
+  </div>`;
+  return {
+    html,
+    mount(root) {
+      const box = root.querySelector('#' + id), slot = box.querySelector('[data-slot]');
+      const place = k => {
+        if (locked) return;
+        placed = k;
+        slot.innerHTML = choices[k];
+        slot.classList.add('filled');
+        box.querySelectorAll('.dnd-item').forEach(b => b.classList.toggle('used', +b.dataset.k === k));
+      };
+      box.querySelectorAll('.dnd-item').forEach(b => {
+        b.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', b.dataset.k); e.dataTransfer.effectAllowed = 'move'; });
+        b.addEventListener('click', () => place(+b.dataset.k));
+      });
+      slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('over'); });
+      slot.addEventListener('dragleave', () => slot.classList.remove('over'));
+      slot.addEventListener('drop', e => {
+        e.preventDefault(); slot.classList.remove('over');
+        const k = e.dataTransfer.getData('text/plain');
+        if (k !== '') place(+k);
+      });
+    },
+    grade(root) {
+      locked = true;
+      const box = root.querySelector('#' + id);
+      box.querySelectorAll('.dnd-item').forEach(b => { b.disabled = true; b.draggable = false; });
+      const good = placed === correct;
+      markRow(box, good, choices[correct] + (placed === null ? ' (nichts zugeordnet, zählt als unbeantwortet)' : ''));
+      return good ? 1 : 0;
+    }
+  };
+}
+
+/* ---------- Venn-Diagramme ---------- */
+// Bereiche: Bit 0 = A, Bit 1 = B, Bit 2 = C. Eine Maske markiert die Bereiche 1…7.
+const BIT = { A: 1, B: 2, C: 4 };
+const OPS = ['∩', '∪', '∖'];
+const leafMask = n => { let k = 0; for (let r = 1; r < 8; r++) if (r & BIT[n]) k |= 1 << r; return k; };
+const evalE = e => {
+  if (typeof e === 'string') return leafMask(e);
+  const a = evalE(e.l), b = evalE(e.r);
+  return e.op === '∩' ? a & b : e.op === '∪' ? a | b : a & ~b & 0xFE;
+};
+const strE = (e, top = true, plain = false) => {
+  if (typeof e === 'string') return plain ? e : I(e);
+  const s = `${strE(e.l, false, plain)} ${e.op} ${strE(e.r, false, plain)}`;
+  return top ? s : `(${s})`;
+};
+const leaves = e => typeof e === 'string' ? [e] : [...leaves(e.l), ...leaves(e.r)];
+function randExpr() {
+  const [X, Y, Z] = shuffle(['A', 'B', 'C']);
+  const o1 = pick(OPS), o2 = pick(OPS);
+  return Math.random() < 0.5 ? { op: o1, l: X, r: { op: o2, l: Y, r: Z } } : { op: o2, l: { op: o1, l: X, r: Y }, r: Z };
+}
+function goodExpr() {
+  for (;;) {
+    const e = randExpr();
+    const k = evalE(e);
+    if (k && k !== 0xFE) return e;
+  }
+}
+// Falsche Antworten wie im eTraining: gleiche Buchstabenfolge, andere Operationen oder Klammern
+function distractors(e, n) {
+  const [X, Y, Z] = leaves(e), all = [];
+  OPS.forEach(o1 => OPS.forEach(o2 => {
+    all.push({ op: o1, l: X, r: { op: o2, l: Y, r: Z } });
+    all.push({ op: o2, l: { op: o1, l: X, r: Y }, r: Z });
+  }));
+  const used = new Set([evalE(e)]), res = [];
+  shuffle(all).forEach(d => { const k = evalE(d); if (res.length < n && k && !used.has(k)) { used.add(k); res.push(d); } });
+  return res;
+}
+const REGION = { 1: 'nur A', 2: 'nur B', 4: 'nur C', 3: 'A und B ohne C', 5: 'A und C ohne B', 6: 'B und C ohne A', 7: 'die Mitte (A, B und C)' };
+const regionsText = k => [1, 2, 4, 3, 5, 6, 7].filter(r => (k >> r) & 1).map(r => REGION[r]).join(' · ');
+const OP_WORD = {
+  '∩': 'Beim Schnitt ∩ bleibt nur, was in beiden Teilen markiert ist.',
+  '∪': 'Bei der Vereinigung ∪ ist alles markiert, was in mindestens einem Teil markiert ist.',
+  '∖': 'Bei der Differenz ∖ nimmt man den linken Teil und entfernt alles, was im rechten Teil liegt.'
+};
+const vennCanvas = (k, label, small) => `<canvas class="venn${small ? ' sm' : ''}" data-venn="m:${k}" role="img" aria-label="${label}"></canvas>`;
+function stepsHTML(e) {
+  const inner = typeof e.l !== 'string' ? e.l : typeof e.r !== 'string' ? e.r : null;
+  const step = (t, x) => `<figure class="step">${vennCanvas(evalE(x), 'Venn-Diagramm für ' + strE(x, true, true), true)}<figcaption>${t}: ${m(strE(x))}</figcaption></figure>`;
+  return `<div class="steps">${inner ? step('Zuerst die Klammer', inner) : ''}${step(inner ? 'Dann die äußere Operation' : 'Ergebnis', e)}</div>
+    <p>${OP_WORD[e.op]}</p>
+    <p>Markierte Bereiche: ${regionsText(evalE(e))}.</p>`;
+}
+
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let probe;
+function toRGB(color) {
+  probe = probe || document.createElement('canvas').getContext('2d');
+  probe.fillStyle = '#000'; probe.fillStyle = color;
+  const s = probe.fillStyle;
+  if (s[0] === '#') return [1, 3, 5].map(i => parseInt(s.slice(i, i + 2), 16));
+  return s.match(/[\d.]+/g).slice(0, 3).map(Number);
+}
+const W = 260, H = 190;
+function paint(cv, inside, colorVar) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  const ctx = cv.getContext('2d');
+  const img = ctx.createImageData(cv.width, cv.height);
+  const [R, G, B] = toRGB(cssVar(colorVar));
+  for (let py = 0; py < cv.height; py++) {
+    for (let px = 0; px < cv.width; px++) {
+      if (!inside((px + .5) / dpr, (py + .5) / dpr)) continue;
+      const o = (py * cv.width + px) * 4;
+      img.data[o] = R; img.data[o + 1] = G; img.data[o + 2] = B; img.data[o + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.strokeStyle = ctx.fillStyle = cssVar('--venn-line');
+  ctx.lineWidth = 1.6;
+  ctx.font = `italic 500 19px ${cssVar('--f-math')}`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  return ctx;
+}
+const CIRC = [{ x: 100, y: 75 }, { x: 160, y: 75 }, { x: 130, y: 125 }], RAD = 55;
+// Drei Mengen, grün markiert wie im eTraining
+function drawVenn(cv, k) {
+  const ctx = paint(cv, (x, y) => {
+    let r = 0;
+    CIRC.forEach((c, i) => { if ((x - c.x) ** 2 + (y - c.y) ** 2 <= RAD * RAD) r |= 1 << i; });
+    return r && (k >> r) & 1;
+  }, '--venn-green');
+  CIRC.forEach(c => { ctx.beginPath(); ctx.arc(c.x, c.y, RAD, 0, Math.PI * 2); ctx.stroke(); });
+  ctx.fillText('A', 68, 62); ctx.fillText('B', 192, 62); ctx.fillText('C', 130, 162);
+}
+// Zwei ineinanderliegende Mengen (außen O, innen In), blau markiert
+function drawNested(cv, O, In, shade) {
+  const inO = (x, y) => ((x - 130) / 105) ** 2 + ((y - 95) / 78) ** 2 <= 1;
+  const inI = (x, y) => (x - 150) ** 2 + (y - 108) ** 2 <= 46 * 46;
+  const ctx = paint(cv, (x, y) => shade === 'inner' ? inI(x, y) : shade === 'ring' ? inO(x, y) && !inI(x, y) : inO(x, y), '--venn');
+  ctx.beginPath(); ctx.ellipse(130, 95, 105, 78, 0, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(150, 108, 46, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillText(O, 64, 54); ctx.fillText(In, 150, 108);
+}
+
+// Venn-Diagramm selbst ausmalen: Bereiche anklicken oder über die Knöpfe umschalten
+// (Idee aus dem Venn-Trainer von whtr9)
+function shadeWidget(target) {
+  const id = 'q' + (++qc);
+  let mask = 0;
+  const html = `<div class="shade">
+    <canvas class="venn" id="${id}" data-venn="m:0" role="img" aria-label="Venn-Diagramm zum Ausmalen. Klicke auf einen Bereich oder nutze die Knöpfe darunter."></canvas>
+    <div class="shade-keys" role="group" aria-label="Bereiche umschalten">
+      ${[1, 2, 4, 3, 5, 6, 7].map(r => `<button type="button" class="chip" data-r="${r}" aria-pressed="false">${REGION[r]}</button>`).join('')}
     </div>
+  </div>`;
+  const sync = root => {
+    const cv = root.querySelector('#' + id);
+    cv.dataset.venn = 'm:' + mask;
+    drawVenn(cv, mask);
+    root.querySelectorAll(`#${id} ~ .shade-keys .chip`).forEach(b => b.setAttribute('aria-pressed', String(!!((mask >> +b.dataset.r) & 1))));
+  };
+  return {
+    html,
+    mount(root) {
+      const cv = root.querySelector('#' + id);
+      cv.addEventListener('click', e => {
+        if (cv.dataset.locked) return;
+        const rect = cv.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width * W, y = (e.clientY - rect.top) / rect.height * H;
+        let r = 0;
+        CIRC.forEach((c, i) => { if ((x - c.x) ** 2 + (y - c.y) ** 2 <= RAD * RAD) r |= 1 << i; });
+        if (!r) return;
+        mask ^= 1 << r; sync(root);
+      });
+      root.querySelectorAll(`#${id} ~ .shade-keys .chip`).forEach(b => b.addEventListener('click', () => { mask ^= 1 << +b.dataset.r; sync(root); }));
+    },
+    grade(root) {
+      root.querySelector('#' + id).dataset.locked = '1';
+      root.querySelectorAll(`#${id} ~ .shade-keys .chip`).forEach(b => { b.disabled = true; });
+      return mask === target ? 1 : 0;
+    },
+    review() {
+      if (mask === target) return '';
+      const miss = [1, 2, 4, 3, 5, 6, 7].filter(r => ((target >> r) & 1) && !((mask >> r) & 1)).map(r => REGION[r]);
+      const extra = [1, 2, 4, 3, 5, 6, 7].filter(r => !((target >> r) & 1) && ((mask >> r) & 1)).map(r => REGION[r]);
+      return `<p>${miss.length ? `Gefehlt hat: <b>${miss.join(' · ')}</b>. ` : ''}${extra.length ? `Zu viel markiert: <b>${extra.join(' · ')}</b>.` : ''}</p>`;
+    }
+  };
+}
 
-    <script>
-        function generateTask() {
-            const vars = ['A', 'B', 'C'].sort(() => 0.5 - Math.random());
-            const ops = ['∪', '∩', '\\', 'Δ'];
+function drawCanvases(root) {
+  root.querySelectorAll('canvas[data-venn]').forEach(cv => {
+    const p = cv.dataset.venn.split(':');
+    if (p[0] === 'm') drawVenn(cv, +p[1]); else drawNested(cv, p[1], p[2], p[3]);
+  });
+}
 
-            const op1 = ops[Math.floor(Math.random() * ops.length)];
-            const op2 = ops[Math.floor(Math.random() * ops.length)];
+/* ---------- 1.1-1: Mengen & Zahlenmengen ---------- */
+const NEST_SVG = `<svg class="nest" viewBox="0 0 240 130" role="img" aria-label="ℕ liegt in ℤ, ℤ liegt in ℚ, ℚ liegt in ℝ">
+  <ellipse cx="120" cy="65" rx="112" ry="58"/><ellipse cx="100" cy="65" rx="86" ry="46"/><ellipse cx="82" cy="65" rx="62" ry="36"/><ellipse cx="62" cy="65" rx="36" ry="24"/>
+  <text x="62" y="71" text-anchor="middle">ℕ</text><text x="124" y="71" text-anchor="middle">ℤ</text><text x="166" y="71" text-anchor="middle">ℚ</text><text x="210" y="71" text-anchor="middle">ℝ</text></svg>`;
+const WF = ['wahr', 'falsch'];
+const LT = { all: true, placeholder: '---- bitte auswählen ----' };
 
-            const comp = v => Math.random() > 0.7 ? `${v}^c` : v;
-            const v1 = comp(vars[0]);
-            const v2 = comp(vars[1]);
-            const v3 = comp(vars[2]);
+function gRational() {
+  const a = rnd(11, 99), q = rnd(3, 9), p = rnd(1, q - 1), k = rnd(2, 10);
+  const roots = [...sample([2, 3, 5, 6, 7, 8, 10, 11, 12, 13, 15], 3), k * k].sort((x, y) => x - y);
+  const items = [
+    { h: `0.${a}`, rat: true, why: `Endlicher Dezimalbruch: 0.${a} = ${a}/100.` },
+    { h: frac(p, q), rat: true, why: 'Bruch aus ganzen Zahlen.' },
+    ...roots.map(n => n === k * k
+      ? { h: sqrt(n), rat: true, why: `${sqrt(n)} = ${k}, denn ${n} ist eine Quadratzahl.` }
+      : { h: sqrt(n), rat: false, why: `${n} ist keine Quadratzahl, also ist ${sqrt(n)} irrational.` }),
+    pick([{ h: 'π', rat: false, why: 'π ist irrational: unendlich viele Nachkommastellen ohne Periode.' },
+          { h: I('e'), rat: false, why: 'Die eulersche Zahl e ist irrational.' }]),
+  ];
+  const rows = items.map(it => ({ label: `${m(it.h)} ist eine rationale Zahl`, correct: it.rat ? 0 : 1, it }));
+  return {
+    topic: 'Zahlenmengen', title: 'Rationale Zahlen',
+    prompt: 'Welche der folgenden Aussagen ist wahr?',
+    w: selectRows(rows, WF, LT),
+    hint: 'Rational heißt: als Bruch p/q mit ganzen Zahlen darstellbar. √n ist nur rational, wenn n eine Quadratzahl ist. Den Punkt gibt es nur, wenn alle Zeilen stimmen.',
+    solution: `<ul class="expl">${rows.map(r => `<li>${m(r.it.h)} → <b>${r.it.rat ? 'wahr' : 'falsch'}</b>. ${r.it.why}</li>`).join('')}</ul>`
+  };
+}
 
-            let formula = '';
-            let evaluate = null;
+function gClassify() {
+  const CATS = ['reell, aber nicht rational', 'rational, aber nicht ganz', 'ganz, aber nicht natürlich', 'natürlich', 'keines davon'];
+  const gens = [
+    [() => { const n = pick([2, 3, 5, 6, 7, 10, 11, 13]); return { h: sqrt(n), why: `${n} ist keine Quadratzahl, also ist ${sqrt(n)} irrational.` }; },
+     () => { const n = pick([2, 3, 5, 7]); return { h: `−${sqrt(n)}`, why: 'Die Wurzel aus einer Nicht-Quadratzahl ist irrational, das Minus ändert daran nichts.' }; },
+     () => ({ h: 'π', why: 'π ist irrational.' }),
+     () => ({ h: I('e'), why: 'e ist irrational.' })],
+    [() => { let p = rnd(1, 15); const q = rnd(2, 9); while (p % q === 0) p++; const s = Math.random() < .6 ? '−' : ''; return { h: s + frac(p, q), why: `${s}${p}/${q} ist ein Bruch, der keine ganze Zahl ergibt.` }; },
+     () => { const a = rnd(0, 9), b = pick(['25', '5', '75']); return { h: `${a}.${b}`, why: 'Endlicher Dezimalbruch, aber keine ganze Zahl.' }; }],
+    [() => { const k = rnd(2, 60); return { h: `−${k}`, why: 'Negative ganze Zahlen liegen in ℤ, aber nicht in ℕ.' }; },
+     () => { const k = rnd(2, 9); return { h: `−${sqrt(k * k)}`, why: `−${sqrt(k * k)} = −${k}.` }; }],
+    [() => { const k = rnd(2, 60); return { h: `${k}`, why: `${k} ist eine positive ganze Zahl.` }; },
+     () => { const k = rnd(2, 9); return { h: sqrt(k * k), why: `${sqrt(k * k)} = ${k}.` }; },
+     () => { const k = rnd(2, 6), q = rnd(2, 5); return { h: frac(k * q, q), why: `${k * q} : ${q} = ${k}.` }; }],
+  ];
+  const rows = sample([0, 1, 2, 3], 2).map(c => { const it = pick(gens[c])(); return { label: m(it.h), correct: c, it }; });
+  return {
+    topic: 'Zahlenmengen', title: 'Zahlenmengen',
+    prompt: `${NEST_SVG}<p>Ordne die gegebenen Zahlen der richtigen Zahlenmenge zu:</p>`,
+    w: selectRows(rows, CATS),
+    hint: 'Erst vereinfachen (z. B. √49 = 7 oder 12/4 = 3), dann die kleinste passende Menge wählen.',
+    solution: `<ul class="expl">${rows.map(r => `<li>${m(r.it.h)} → <b>${CATS[r.correct]}</b>. ${r.it.why}</li>`).join('')}</ul>
+      <p>„Keines davon“ ist hier nie richtig, denn jede Zahl auf dem Zahlenstrahl ist reell.</p>`
+  };
+}
 
-            const applyOp = (val1, val2, op) => {
-                if (op === '∪') return val1 || val2;
-                if (op === '∩') return val1 && val2;
-                if (op === '\\') return val1 && !val2;
-                if (op === 'Δ') return val1 !== val2;
-            };
+function gDescriptions() {
+  const D = ['positive ganze Zahlen', 'ganze Zahlen', 'Bruchzahlen mit ganzen Zahlen in Nenner und Zähler', 'rationale und irrationale Zahlen'];
+  const p = rnd(1, 5), q = pick([7, 11, 13, 17, 19, 23]), k = rnd(10, 15);
+  const irr = pick([{ h: I('e'), why: 'e ist irrational.' }, { h: 'π', why: 'π ist irrational.' }, { h: sqrt(pick([2, 3, 5])), why: 'Wurzel aus einer Nicht-Quadratzahl.' }]);
+  const wf = shuffle([
+    { label: `${m('−' + frac(p, q))} ist eine rationale Zahl.`, options: WF, correct: 0, why: 'Bruch aus ganzen Zahlen.' },
+    { label: `${m(irr.h)} ist eine rationale Zahl.`, options: WF, correct: 1, why: irr.why },
+    { label: `${m(sqrt(k * k))} ist eine rationale Zahl.`, options: WF, correct: 0, why: `${sqrt(k * k)} = ${k}.` },
+  ]);
+  const rows = [{ label: m('ℚ'), correct: 2 }, { label: m('ℝ'), correct: 3 }, { label: m('ℤ'), correct: 1 }, { label: m('ℕ'), correct: 0 }, ...wf];
+  return {
+    topic: 'Zahlenmengen', title: 'Zahlenmengen',
+    prompt: 'Ordne zu:',
+    w: selectRows(rows, D),
+    hint: 'ℤ kommt von „Zahlen“, ℚ von „Quotient“ (Bruch), ℝ von „reell“.',
+    solution: `<ul class="expl"><li>${m('ℕ = { 1, 2, 3, … }')}: positive ganze Zahlen</li><li>${m('ℤ = { …, −2, −1, 0, 1, 2, … }')}: ganze Zahlen</li><li>${m('ℚ')}: Bruchzahlen mit ganzen Zahlen in Zähler und Nenner</li><li>${m('ℝ')}: rationale und irrationale Zahlen</li>
+      ${wf.map(r => `<li>${r.label} → <b>${WF[r.correct]}</b>. ${r.why}</li>`).join('')}</ul>`
+  };
+}
 
-            const getVal = (vStr, a, b, c) => {
-                let base = vStr.replace('^c', '');
-                let val = base === 'A' ? a : (base === 'B' ? b : c);
-                return vStr.includes('^c') ? !val : val;
-            };
+function gOps() {
+  const SETS = { N: ['ℕ', 'natürlichen'], Z: ['ℤ', 'ganzen'], Q: ['ℚ', 'rationalen'], R: ['ℝ', 'reellen'] };
+  const s = pick(['N', 'Z', 'Q', 'Q', 'R']);
+  const ops = [
+    { t: 'multiplizieren', ok: { N: 1, Z: 1, Q: 1, R: 1 } },
+    { t: 'dividieren (außer durch 0)', ok: { N: 0, Z: 0, Q: 1, R: 1 }, ce: { N: '1 : 2 = ½ ∉ ℕ', Z: '1 : 2 = ½ ∉ ℤ' } },
+    { t: 'die Quadratwurzel ziehen', ok: { N: 0, Z: 0, Q: 0, R: 0 }, ce: { N: '√2 ∉ ℕ', Z: '√2 ∉ ℤ', Q: '√2 ∉ ℚ', R: '√(−1) ∉ ℝ' } },
+    { t: 'den Betrag bilden', ok: { N: 1, Z: 1, Q: 1, R: 1 } },
+  ];
+  const rows = ops.map(o => ({ label: o.t, correct: o.ok[s] ? 0 : 1, o }));
+  const S = SETS[s][0];
+  return {
+    topic: 'Zahlenmengen', title: 'Zahlenmengen',
+    prompt: `Folgende Rechenoperation kann immer innerhalb der Menge der ${SETS[s][1]} Zahlen (${m(S)}) ausgeführt werden:`,
+    w: selectRows(rows, ['ja', 'nein']),
+    hint: 'Such ein Gegenbeispiel: Gibt es Zahlen aus der Menge, bei denen das Ergebnis herausfällt? Ein einziges Gegenbeispiel reicht für „nein“.',
+    solution: `<ul class="expl">${rows.map(r => `<li>${r.o.t} → <b>${r.o.ok[s] ? 'ja' : 'nein'}</b>. ${r.o.ok[s] ? `Das Ergebnis liegt immer wieder in ${m(S)}.` : `Gegenbeispiel: ${m(r.o.ce[s])}`}</li>`).join('')}</ul>`
+  };
+}
 
-            if (Math.random() > 0.5) {
-                formula = `(${v1} ${op1} ${v2}) ${op2} ${v3}`;
-                evaluate = (a, b, c) => {
-                    return applyOp(applyOp(getVal(v1, a,b,c), getVal(v2, a,b,c), op1), getVal(v3, a,b,c), op2);
-                };
-            } else {
-                formula = `${v1} ${op1} (${v2} ${op2} ${v3})`;
-                evaluate = (a, b, c) => {
-                    return applyOp(getVal(v1, a,b,c), applyOp(getVal(v2, a,b,c), getVal(v3, a,b,c), op2), op1);
-                };
-            }
+function gChain() {
+  const corr = ['ℝ', 'ℚ', 'ℤ', 'ℕ'], fmt = a => a.join(' → ');
+  const seen = new Set([key(corr)]), ds = [];
+  while (ds.length < 4) { const p = shuffle(corr); if (!seen.has(key(p))) { seen.add(key(p)); ds.push(p); } }
+  const opts = shuffle([{ html: m(fmt(corr)), correct: true }, ...ds.map(p => ({ html: m(fmt(p)), correct: false }))]);
+  return {
+    topic: 'Zahlenmengen', title: 'Zahlenmengen',
+    prompt: 'Welche Aussage stimmt?',
+    w: mc(opts),
+    hint: 'Der Pfeil geht von der größeren zur kleineren Menge. Welche Zahlenmenge ist die größte?',
+    solution: `<p>${m(fmt(corr))}, also ${m('ℝ ⊃ ℚ ⊃ ℤ ⊃ ℕ')} bzw. ${m('ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ')}.</p><p>Jede natürliche Zahl ist ganz, jede ganze Zahl ist ein Bruch (z. B. 5 = 5/1), und jeder Bruch ist eine reelle Zahl.</p>`
+  };
+}
 
-            if (Math.random() > 0.8) {
-                formula = `(${formula})^c`;
-                const oldEval = evaluate;
-                evaluate = (a, b, c) => !oldEval(a, b, c);
-            }
+function gInfinite() {
+  const POOL = [
+    ['Primzahlen', true, 'Es gibt unendlich viele Primzahlen (Satz von Euklid).'],
+    ['gerade Primzahlen', false, 'Die 2 ist die einzige gerade Primzahl.'],
+    ['ganze Zahlen &lt; 5', true, '4, 3, 2, 1, 0, −1, −2, … geht nach unten unbegrenzt weiter.'],
+    ['natürliche Zahlen &lt; 5', false, 'Nur 1, 2, 3, 4, also endlich viele.'],
+    ['rationale Zahlen zwischen 0 und 1', true, 'z. B. 1/2, 1/3, 1/4, … Zwischen zwei Zahlen liegen immer unendlich viele Brüche.'],
+    ['reelle Zahlen zwischen 0 und 10', true, 'Jedes Intervall enthält unendlich viele reelle Zahlen.'],
+    ['ganze Zahlen zwischen −2 und 2', false, 'Nur −1, 0 und 1.'],
+    ['natürliche Zahlen zwischen 3 und 4', false, 'Dazwischen liegt keine einzige natürliche Zahl.'],
+    ['negative ganze Zahlen', true, '−1, −2, −3, … ohne Ende.'],
+    ['irrationale Zahlen zwischen 1 und 2', true, 'z. B. √2, √3, √2,5 … es gibt unendlich viele.'],
+    ['Quadratzahlen', true, '1, 4, 9, 16, … ohne Ende.'],
+    ['natürliche Teiler von 12', false, 'Nur 1, 2, 3, 4, 6 und 12.'],
+    ['rationale Zahlen zwischen 0,1 und 0,11', true, 'Auch in winzigen Intervallen liegen unendlich viele Brüche, z. B. 0,101; 0,1001; …'],
+    ['ganze Zahlen zwischen 0 und 1', false, 'Dazwischen liegt keine ganze Zahl.'],
+    ['gerade natürliche Zahlen', true, '2, 4, 6, 8, … ohne Ende.'],
+    ['einstellige natürliche Zahlen', false, 'Nur 1 bis 9.'],
+  ];
+  let ch;
+  do { ch = sample(POOL, 6); } while (ch.filter(p => p[1]).length < 2 || ch.filter(p => !p[1]).length < 2);
+  const rows = ch.map(p => ({ label: `… ${p[0]}`, correct: p[1] ? 0 : 1, p }));
+  return {
+    topic: 'Zahlenmengen', title: 'Zahlenmengen',
+    prompt: 'Es gibt unendlich viele …',
+    w: selectRows(rows, WF, LT),
+    hint: 'Gibt es eine Grenze nach oben und nach unten, und kommen nur ganze Zahlen in Frage? Dann sind es endlich viele. Den Punkt gibt es nur, wenn alle Zeilen stimmen.',
+    solution: `<ul class="expl">${rows.map(r => `<li>${r.p[0]} → <b>${r.p[1] ? 'wahr' : 'falsch'}</b>. ${r.p[2]}</li>`).join('')}</ul>`
+  };
+}
 
-            return { formula, evaluate };
-        }
+// Feste Mengen A, B, C für eine Runde und sieben Bedingungen mit sieben verschiedenen Ergebnissen.
+// Die sieben Ergebnisse sind bei jeder Frage die Antwortmöglichkeiten.
+function makeDefSets() {
+  for (;;) {
+    const A = sortN(sample(range(1, 7), 5));
+    const b0 = rnd(2, 4), B = range(b0, b0 + 6);
+    const C = sortN(sample(range(1, 11), 4));
+    const S = { A, B, C };
+    const has = (n, v) => S[n].includes(v);
+    const k1 = b0 + rnd(1, 2), u1 = k1 + 3, k2 = b0 + 2, u2 = b0 + 5;
+    const x = I('x'), iA = I('A'), iB = I('B'), iC = I('C');
+    const T = [
+      { X: 'B', c: `${x} &lt; ${u1} und ${x} &gt; ${k1}`, f: v => [v < u1 && v > k1, v >= u1 ? `${v} ≥ ${u1}` : v <= k1 ? `${v} ≤ ${k1}` : `${k1} &lt; ${v} &lt; ${u1}`] },
+      { X: 'C', c: `${x} ∈ ${iA} oder ${x} ∈ ${iB}`, f: v => [has('A', v) || has('B', v), has('A', v) ? `${v} ∈ ${iA}` : has('B', v) ? `${v} ∈ ${iB}` : `${v} ∉ ${iA} und ${v} ∉ ${iB}`] },
+      { X: 'B', c: `${x} &lt; ${k2} oder ${x} &gt; ${u2}`, f: v => [v < k2 || v > u2, v < k2 ? `${v} &lt; ${k2}` : v > u2 ? `${v} &gt; ${u2}` : `${k2} ≤ ${v} ≤ ${u2}`] },
+      { X: 'A', c: `${x} ∈ ${iC} und ${x} ∉ ${iB}`, f: v => [has('C', v) && !has('B', v), !has('C', v) ? `${v} ∉ ${iC}` : has('B', v) ? `${v} ∈ ${iB}` : `${v} ∈ ${iC} und ${v} ∉ ${iB}`] },
+      { X: 'A', c: `${x} ∉ ${iC}`, f: v => [!has('C', v), has('C', v) ? `${v} ∈ ${iC}` : `${v} ∉ ${iC}`] },
+      { X: 'A', c: `${x} ∈ ${iB} und ${x} ∉ ${iC}`, f: v => [has('B', v) && !has('C', v), !has('B', v) ? `${v} ∉ ${iB}` : has('C', v) ? `${v} ∈ ${iC}` : `${v} ∈ ${iB} und ${v} ∉ ${iC}`] },
+      { X: 'C', c: `${x} ∉ ${iA} und ${x} ∉ ${iB}`, f: v => [!has('A', v) && !has('B', v), has('A', v) ? `${v} ∈ ${iA}` : has('B', v) ? `${v} ∈ ${iB}` : `${v} ∉ ${iA} und ${v} ∉ ${iB}`] },
+    ];
+    const res = T.map(t => S[t.X].filter(v => t.f(v)[0]));
+    if (new Set(res.map(key)).size === T.length) return { S, T, res };
+  }
+}
 
-        let state = { u: false, a: false, b: false, c: false, ab: false, ac: false, bc: false, abc: false };
-        let currentTask = null;
+function gSetBuilder(ds, i) {
+  const { S, T, res } = ds, t = T[i], x = I('x');
+  const q = `{ ${x} ∈ ${I(t.X)} | ${t.c} }`;
+  const opts = shuffle(res.map((r, j) => ({ html: m(setH(r)), correct: j === i })));
+  return {
+    topic: 'Definition von Mengen', title: 'Definition von Mengen',
+    givens: `<span class="givens-label">Folgende Mengen seien gegeben:</span>${defH('A', S.A)}${defH('B', S.B)}${defH('C', S.C)}`,
+    prompt: `<p>Gesucht ist</p><p class="m big-m">${q}</p>`,
+    w: mc(opts),
+    hint: `Geh die Elemente von ${I(t.X)} einzeln durch und prüfe für jedes die Bedingung hinter dem Strich.`,
+    solution: `<p>Gesucht sind alle Elemente von ${m(I(t.X))}, die die Bedingung erfüllen:</p>
+      <div class="tbl-wrap"><table class="check"><thead><tr><th>${I('x')}</th><th>Prüfung</th><th>dabei?</th></tr></thead><tbody>
+      ${S[t.X].map(v => { const [ok, why] = t.f(v); return `<tr><td>${v}</td><td>${why}</td><td class="${ok ? 'yes' : 'no'}">${ok ? '✓' : '✗'}</td></tr>`; }).join('')}
+      </tbody></table></div>
+      <p>Ergebnis: ${m(q + ' = ' + setH(res[i]))}</p>`
+  };
+}
 
-        const svg = document.getElementById('venn-svg');
+function gSubset() {
+  const s = rnd(1, 3), big = range(s, s + 5), small = sortN(sample(big, 3));
+  const [nb, ns] = Math.random() < .75 ? ['A', 'B'] : ['B', 'A'];
+  const S = { [nb]: big, [ns]: small };
+  const sub = (p, q) => S[p].every(v => S[q].includes(v));
+  const st = [];
+  [['A', 'B'], ['B', 'A']].forEach(([p, q]) => {
+    st.push({ h: `${I(p)} ⊆ ${I(q)}`, v: sub(p, q), why: sub(p, q) ? `Jedes Element von ${I(p)} liegt in ${I(q)}.` : `${S[p].find(v => !S[q].includes(v))} ∈ ${I(p)}, aber ∉ ${I(q)}.` });
+    st.push({ h: `${I(p)} ⊂ ${I(q)}`, v: sub(p, q), why: sub(p, q) ? `${I(p)} ⊆ ${I(q)} und ${I(p)} ≠ ${I(q)}: echte Teilmenge.` : `Schon ${I(p)} ⊆ ${I(q)} gilt nicht.` });
+  });
+  const rows = shuffle(st).map(x => ({ label: m(x.h), correct: x.v ? 0 : 1, x }));
+  return {
+    topic: 'Teilmenge', title: 'Teilmenge',
+    givens: defH('A', S.A) + '<span>und</span>' + defH('B', S.B),
+    prompt: 'Für jede Aussage muss entschieden werden: [richtig] oder [falsch]',
+    w: kprim(rows),
+    hint: '⊆ heißt: jedes Element der linken Menge liegt in der rechten. ⊂ (echte Teilmenge) heißt zusätzlich: Die Mengen sind verschieden. 4 richtige Antworten geben 1 Punkt, 3 richtige ½ Punkt.',
+    solution: `<p>${m(I(ns))} ist eine echte Teilmenge von ${m(I(nb))}: ${m(`${I(ns)} ⊂ ${I(nb)}`)} und ${m(`${I(ns)} ⊆ ${I(nb)}`)}.</p>
+      <ul class="expl">${rows.map(r => `<li>${r.label} → <b>${r.x.v ? 'richtig' : 'falsch'}</b>. ${r.x.why}</li>`).join('')}</ul>
+      <p>${m(I('M') + ' ⊆ ' + I('N'))}: ${m(I('M'))} ist Teilmenge von ${m(I('N'))}. ${m(I('M') + ' ⊂ ' + I('N'))}: ${m(I('M'))} ist echte Teilmenge von ${m(I('N'))}.</p>`
+  };
+}
 
-        function getRegion(e) {
-            const pt = svg.createSVGPoint();
-            pt.x = e.clientX;
-            pt.y = e.clientY;
-            const cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
+/* ---------- 1.1-2: Mengenverknüpfungen ---------- */
+function gVennToExpr() {
+  const e = goodExpr();
+  const opts = shuffle([{ html: m(strE(e)), correct: true }, ...distractors(e, 5).map(d => ({ html: m(strE(d)), correct: false }))]);
+  return {
+    topic: 'Durchschnitt, Vereinigung, Differenz', title: 'Durchschnitt, Vereinigung, Differenz',
+    prompt: `<div class="figure">${vennCanvas(evalE(e), 'Venn-Diagramm mit drei Mengen A, B und C, ein Teil ist grün markiert')}</div><p>Welcher Ausdruck beschreibt die grüne Menge?</p>`,
+    w: mc(opts),
+    hint: 'Rechne die Vorschläge durch: erst die Klammer im Kopf schraffieren, dann die äußere Operation. Vergleiche dann Bereich für Bereich.',
+    solution: stepsHTML(e)
+  };
+}
 
-            if (cursor.x < 5 || cursor.x > 295 || cursor.y < 5 || cursor.y > 295) return null;
+function gExprToVenn() {
+  const e = goodExpr();
+  const opts = shuffle([e, ...distractors(e, 5)].map((d, i) => ({ html: vennCanvas(evalE(d), 'Antwortdiagramm'), correct: i === 0 })));
+  return {
+    topic: 'Durchschnitt, Vereinigung, Differenz', title: 'Durchschnitt, Vereinigung, Differenz',
+    prompt: `<p class="m big-m">${strE(e)}</p><p>Welches Diagramm passt?</p>`,
+    w: mc(opts, true),
+    hint: 'Zuerst die Klammer schraffieren, dann mit der äußeren Menge verknüpfen.',
+    solution: stepsHTML(e)
+  };
+}
 
-            const r = 70;
-            const inA = Math.hypot(cursor.x - 120, cursor.y - 120) <= r;
-            const inB = Math.hypot(cursor.x - 180, cursor.y - 120) <= r;
-            const inC = Math.hypot(cursor.x - 150, cursor.y - 172) <= r;
+function gComplement(dir) {
+  const [O, In] = shuffle(['A', 'B']);
+  const twice = Math.random() < .4;
+  const shade = twice ? 'inner' : 'ring';
+  const Cx = (g, arg) => `${I('C')}<sub>${g}</sub>(${arg})`;
+  const barH = n => `<span class="bar">${I(n)}</span>`;
+  const nested = (o, i, sh) => `<canvas class="venn" data-venn="n:${o}:${i}:${sh}" role="img" aria-label="Menge ${i} liegt in ${o}, blau: ${sh === 'inner' ? 'innere Menge' : sh === 'ring' ? 'Ring' : 'ganze äußere Menge'}"></canvas>`;
+  const expr = Cx(I(O), twice ? barH(In) : I(In));
+  const explain = `<p>${m(Cx(I('G'), I('M')) + ' = ' + I('G') + ' ∖ ' + I('M'))} ist das Komplement von ${m(I('M'))} bezüglich ${m(I('G'))}. Es ist nur definiert, wenn ${m(I('M') + ' ⊆ ' + I('G'))}.</p>` +
+    (twice
+      ? `<p>Hier ist ${m(barH(In))} das Komplement von ${m(I(In))} in ${m(I(O))}, also ${m(I(O) + ' ∖ ' + I(In))} (der Ring). Davon nochmal das Komplement in ${m(I(O))} ergibt wieder ${m(I(In))}: ${m(expr + ' = ' + I(In))}.</p>`
+      : `<p>Hier liegt ${m(I(In))} in ${m(I(O))}. ${m(expr + ' = ' + I(O) + ' ∖ ' + I(In))}: alles aus ${m(I(O))} ohne ${m(I(In))}, also der Ring.</p>`);
+  if (dir === 'e2d') {
+    const opts = shuffle([['A', 'B'], ['B', 'A']].flatMap(([o, i]) => ['inner', 'ring', 'full'].map(sh => ({ html: nested(o, i, sh), correct: o === O && sh === shade }))));
+    return {
+      topic: 'Komplementärmenge', title: 'Komplementärmenge',
+      prompt: `<p>Welches Diagramm passt? Die blau gekennzeichnete Menge ist beschrieben:</p><p class="m big-m">${expr}</p>`,
+      w: mc(opts, true),
+      hint: `${Cx(I('G'), I('M'))} heißt ${I('G')} ∖ ${I('M')}. Die Menge in der Klammer muss in der unteren Menge enthalten sein.`,
+      solution: `<div class="steps"><figure class="step">${nested(O, In, shade)}</figure></div>${explain}`
+    };
+  }
+  const cands = [Cx(I('A'), barH('B')), Cx(barH('A'), I('B')), Cx(I('B'), barH('A')), Cx(barH('B'), I('A')), Cx(I('B'), I('A')), Cx(I('A'), I('B'))];
+  const opts = shuffle(cands.map(h => ({ html: m(h), correct: h === expr })));
+  return {
+    topic: 'Komplementärmenge', title: 'Komplementärmenge',
+    prompt: `<p>Welche Aussage ist richtig? Die blau gekennzeichnete Menge ist zu beschreiben.</p><div class="figure">${nested(O, In, shade)}</div>`,
+    w: mc(opts),
+    hint: `${Cx(I('G'), I('M'))} heißt ${I('G')} ∖ ${I('M')}. Welche Menge liegt innen, welche außen?`,
+    solution: explain
+  };
+}
 
-            if (!inA && !inB && !inC) return 'u';
-            if (inA && !inB && !inC) return 'a';
-            if (!inA && inB && !inC) return 'b';
-            if (!inA && !inB && inC) return 'c';
-            if (inA && inB && !inC) return 'ab';
-            if (inA && !inB && inC) return 'ac';
-            if (!inA && inB && inC) return 'bc';
-            if (inA && inB && inC) return 'abc';
-            return null;
-        }
+/* ---------- Extra: Ausmalen & Rechnen ---------- */
+function gShade() {
+  const e = goodExpr();
+  return {
+    topic: 'Extra: Ausmalen', title: 'Selbst ausmalen',
+    prompt: `<p>Male die Menge aus. Klicke dazu im Diagramm auf die Bereiche, die dazugehören. Ein zweiter Klick nimmt die Markierung wieder weg.</p><p class="m big-m">${strE(e)}</p>`,
+    w: shadeWidget(evalE(e)),
+    hint: 'Male zuerst im Kopf die Klammer aus. Geh dann die 7 Bereiche einzeln durch und entscheide für jeden: gehört er zum Ergebnis?',
+    solution: stepsHTML(e)
+  };
+}
 
-        function updateVisuals(hoveredRegion = null) {
-            Object.keys(state).forEach(id => {
-                const rect = document.getElementById(`region-${id}`);
-                const isActive = state[id];
-                const isHovered = id === hoveredRegion;
-                
-                if (isActive) {
-                    rect.setAttribute('fill', isHovered ? '#3a7bc2' : '#4a90e2');
-                } else {
-                    rect.setAttribute('fill', isHovered ? '#c0c0c0' : '#e0e0e0');
-                }
-            });
-        }
+function gConcrete() {
+  const S = { A: sortN(sample(range(1, 9), rnd(4, 5))), B: sortN(sample(range(1, 9), rnd(4, 5))), C: sortN(sample(range(1, 9), 4)) };
+  const U = union, N = isect, D = diff;
+  const tasks = [
+    { l: 'A ∪ B', v: U(S.A, S.B), how: () => 'alle Elemente aus A und aus B, jedes nur einmal' },
+    { l: 'A ∩ B', v: N(S.A, S.B), how: () => 'nur die Elemente, die in A und in B liegen' },
+    { l: 'A ∖ B', v: D(S.A, S.B), how: () => 'A ohne die Elemente, die auch in B liegen' },
+    { l: 'B ∖ A', v: D(S.B, S.A), how: () => 'B ohne die Elemente, die auch in A liegen' },
+    { l: '(A ∪ B) ∖ C', v: D(U(S.A, S.B), S.C), how: () => `A ∪ B = ${setH(U(S.A, S.B))}, davon die Elemente von C entfernen` },
+    { l: 'A ∩ (B ∪ C)', v: N(S.A, U(S.B, S.C)), how: () => `B ∪ C = ${setH(U(S.B, S.C))}, davon nur, was auch in A liegt` },
+    { l: '(A ∩ B) ∪ C', v: U(N(S.A, S.B), S.C), how: () => `A ∩ B = ${setH(N(S.A, S.B))}, dazu alle Elemente von C` },
+    { l: 'C ∖ (A ∩ B)', v: D(S.C, N(S.A, S.B)), how: () => `A ∩ B = ${setH(N(S.A, S.B))}, diese Elemente aus C entfernen` },
+  ];
+  const ch = [pick(tasks.slice(0, 4)), ...sample(tasks.slice(4), 2)];
+  const rows = ch.map(t => ({ label: vars(t.l), answer: t.v, t }));
+  return {
+    topic: 'Extra: Rechnen', title: 'Mit konkreten Mengen rechnen',
+    givens: defH('A', S.A) + defH('B', S.B) + defH('C', S.C),
+    prompt: 'Bestimme die Mengen. Schreibe z. B. {1, 4, 7}, für die leere Menge {} oder ∅.',
+    w: setRows(rows),
+    hint: '∪: alles aus beiden Mengen. ∩: nur Gemeinsames. A ∖ B: aus A alles streichen, was in B liegt. Klammern zuerst.',
+    solution: `<ul class="expl">${rows.map(r => `<li>${m(r.label + ' = ' + setH(r.answer))}: ${vars(r.t.how())}.</li>`).join('')}</ul>`
+  };
+}
 
-        svg.addEventListener('click', (e) => {
-            const regionId = getRegion(e);
-            if (!regionId) return;
-            state[regionId] = !state[regionId];
-            updateVisuals(regionId);
-        });
+/* ---------- 1.1-3: Kartesisches Produkt & Mächtigkeit ---------- */
+function gProductMC() {
+  const A = range(1, pick([2, 2, 3])), B = ['a', 'b', 'c'].slice(0, pick([2, 3, 3]));
+  const swap = Math.random() < .5;
+  const [Xn, X, Yn, Y] = swap ? ['B', B, 'A', A] : ['A', A, 'B', B];
+  const wrong = [
+    pairsH(Y, X),
+    `{ ${tupleH(X)}, ${tupleH(Y)} }`,
+    setH([...X, ...Y]),
+    `{ ${pairs(X, Y).map(([x, y]) => `(${el(x)} · ${el(y)})`).join(', ')} }`,
+  ];
+  const opts = shuffle([{ html: m(pairsH(X, Y)), correct: true }, ...wrong.map(h => ({ html: m(h), correct: false }))]);
+  return {
+    topic: 'Kartesisches Produkt', title: 'Kartesisches Produkt',
+    givens: `<span class="givens-label">Gegeben sind</span>${defH('A', A)}<span>und</span>${defH('B', B)}`,
+    prompt: `<p class="m big-m">${I(Xn)} × ${I(Yn)} =</p>`,
+    w: mc(opts),
+    hint: `Bei ${I(Xn)} × ${I(Yn)} kommt die erste Komponente jedes Paares aus ${I(Xn)}, die zweite aus ${I(Yn)}.`,
+    solution: `<p>${m(I(Xn) + ' × ' + I(Yn))} enthält alle geordneten Paare ${m('(' + I('x') + ', ' + I('y') + ')')} mit ${m(I('x') + ' ∈ ' + I(Xn))} und ${m(I('y') + ' ∈ ' + I(Yn))}:</p>
+      <p>${m(pairsH(X, Y))}</p>
+      <p>Das sind ${m(`|${I(Xn)}| · |${I(Yn)}| = ${X.length} · ${Y.length} = ${X.length * Y.length}`)} Paare. Vorsicht: ${m(pairsH(Y, X))} wäre ${m(I(Yn) + ' × ' + I(Xn))}, denn bei Paaren zählt die Reihenfolge.</p>`
+  };
+}
 
-        svg.addEventListener('mousemove', (e) => updateVisuals(getRegion(e)));
-        svg.addEventListener('mouseleave', () => updateVisuals(null));
+function gProductCombined() {
+  const A = [1, 2];
+  const [l0, l1, l2] = ['a', 'b', 'c'];
+  const [B, C] = Math.random() < .7 ? [[l0, l1], [l1, l2]] : [[l1, l2], [l0, l1]];
+  const OPF = { '∩': isect, '∪': union, '∖': diff };
+  const op = pick(OPS), Sx = OPF[op](B, C);
+  const other = OPF[op === '∪' ? '∩' : '∪'](B, C);
+  const correct = pairsH(A, Sx);
+  const pool = [
+    `{ ${tupleH(A)}, ${tupleH(B)}, ${tupleH(C)} }`,
+    pairsH(A, other),
+    `{ ${tupleH(A)}, ${tupleH(Sx)} }`,
+    pairsH(other, A),
+    pairsH(Sx, A),
+  ];
+  const seen = new Set([correct]), ds = [];
+  pool.forEach(h => { if (ds.length < 4 && !seen.has(h)) { seen.add(h); ds.push(h); } });
+  const opts = shuffle([{ html: m(correct), correct: true }, ...ds.map(h => ({ html: m(h), correct: false }))]);
+  const exprH = `${I('A')} × (${I('B')} ${op} ${I('C')})`;
+  return {
+    topic: 'Kartesisches Produkt', title: 'Kartesisches Produkt',
+    givens: `<span class="givens-label">Gegeben seien die Mengen</span>${defH('A', A)}${defH('B', B)}${defH('C', C)}`,
+    prompt: `<p class="m big-m">${exprH} =</p>`,
+    w: mc(opts),
+    hint: 'Erst die Klammer ausrechnen, dann das kartesische Produkt bilden.',
+    solution: `<p>Zuerst die Klammer: ${m(`${I('B')} ${op} ${I('C')} = ${setH(Sx)}`)}.</p>
+      <p>Dann das Produkt: ${m(exprH + ' = ' + correct)}</p>`
+  };
+}
 
-        const taskFormulaEl = document.getElementById('task-formula');
-        const checkBtn = document.getElementById('check-btn');
-        const nextBtn = document.getElementById('next-btn');
+// Gleiche Mengen für beide Mächtigkeits-Aufgaben einer Runde, wie im eTraining
+function makeCardSets() {
+  const n = rnd(2, 4), k = rnd(2, 3);
+  const ev = range(1, k).map(i => 2 * i);
+  return { A: range(-n, n), B: sortN([...ev.map(v => -v), ...ev]) };
+}
 
-        function loadNewTask() {
-            currentTask = generateTask();
-            taskFormulaEl.textContent = currentTask.formula;
-            
-            Object.keys(state).forEach(key => state[key] = false);
-            updateVisuals();
-            
-            checkBtn.style.display = 'inline-block';
-            nextBtn.style.display = 'none';
-        }
+function gCardProduct(cs) {
+  const { A, B } = cs, S = { A, B };
+  const [p, q] = pick([['B', 'B'], ['B', 'B'], ['A', 'A']]);
+  const rows = [
+    { label: `|${I('A')} × ${I('B')}| =`, answer: A.length * B.length },
+    { label: `|${I(p)} × ${I(q)}| =`, answer: S[p].length * S[q].length },
+  ];
+  return {
+    topic: 'Mächtigkeit', title: 'Mächtigkeit',
+    givens: `<span class="givens-label">Es sei</span>${defH('A', A)}<span>und</span>${defH('B', B)}`,
+    prompt: `${NUM_NOTE}<p>Bestimme die Mächtigkeit der Mengen:</p>`,
+    w: numRows(rows),
+    hint: '|X × Y| = |X| · |Y|. Zähle zuerst, wie viele Elemente die Mengen haben.',
+    solution: `<p>${m(`|${I('A')}| = ${A.length}`)} und ${m(`|${I('B')}| = ${B.length}`)}. Für jedes Element der ersten Menge gibt es so viele Paare, wie die zweite Menge Elemente hat:</p>
+      <ul class="expl"><li>${m(`|${I('A')} × ${I('B')}| = ${A.length} · ${B.length} = ${A.length * B.length}`)}</li><li>${m(`|${I(p)} × ${I(q)}| = ${S[p].length} · ${S[q].length} = ${S[p].length * S[q].length}`)}</li></ul>`
+  };
+}
 
-        checkBtn.addEventListener('click', function() {
-            const correct = {
-                u: currentTask.evaluate(false, false, false),
-                a: currentTask.evaluate(true, false, false),
-                b: currentTask.evaluate(false, true, false),
-                c: currentTask.evaluate(false, false, true),
-                ab: currentTask.evaluate(true, true, false),
-                ac: currentTask.evaluate(true, false, true),
-                bc: currentTask.evaluate(false, true, true),
-                abc: currentTask.evaluate(true, true, true)
-            };
+function gCardUnion(cs) {
+  const { A, B } = cs, N = isect(A, B), U = union(A, B);
+  const rows = [
+    { label: `|${I('A')}| =`, answer: A.length },
+    { label: `|${I('B')}| =`, answer: B.length },
+    { label: `|${I('A')} ∪ ${I('B')}| =`, answer: U.length },
+    { label: `|${I('A')} ∩ ${I('B')}| =`, answer: N.length },
+  ];
+  return {
+    topic: 'Mächtigkeit', title: 'Mächtigkeit',
+    givens: `<span class="givens-label">Es sei</span>${defH('A', A)}<span>und</span>${defH('B', B)}`,
+    prompt: `${NUM_NOTE}<p>Bestimme die Mächtigkeit der Mengen:</p>`,
+    w: numRows(rows),
+    hint: 'Erst die gemeinsamen Elemente suchen. Dann gilt |A ∪ B| = |A| + |B| − |A ∩ B|.',
+    solution: `<p>${m(`${I('A')} ∩ ${I('B')} = ${setH(N)}`)}, also ${m(`|${I('A')} ∩ ${I('B')}| = ${N.length}`)}.</p>
+      <p>${m(`|${I('A')} ∪ ${I('B')}| = |${I('A')}| + |${I('B')}| − |${I('A')} ∩ ${I('B')}| = ${A.length} + ${B.length} − ${N.length} = ${U.length}`)}</p>
+      <p>Die gemeinsamen Elemente werden abgezogen, weil sie sonst doppelt gezählt würden. Zur Kontrolle: ${m(`${I('A')} ∪ ${I('B')} = ${setH(U)}`)}.</p>`
+  };
+}
 
-            const isCorrect = Object.keys(state).every(key => state[key] === correct[key]);
+function gCardDup() {
+  const type = pick(['bits', 'words', 'nums']);
+  let distinct;
+  if (type === 'bits') distinct = Math.random() < .85 ? [0, 1] : [pick([0, 1])];
+  else if (type === 'words') distinct = sample(['Baum', 'Blatt', 'Busch', 'Strauch', 'Ast', 'Wurzel', 'Blüte', 'Zweig'], rnd(3, 5));
+  else distinct = sample(range(1, 9), rnd(3, 5));
+  const total = type === 'bits' ? rnd(6, 9) : distinct.length + rnd(1, 3);
+  let list = [...distinct];
+  while (list.length < total) list.push(pick(distinct));
+  list = shuffle(list);
+  const f = type === 'words' ? (w => I(w)) : el;
+  const order = uniq(list);
+  return {
+    topic: 'Mächtigkeit', title: 'Mächtigkeit',
+    prompt: `${NUM_NOTE}<p>Bestimme die Mächtigkeit der Menge</p><p class="m big-m">${I('M')} = ${setH(list, f)}</p>`,
+    w: numRows([{ label: `|${I('M')}| =`, answer: order.length }]),
+    hint: 'Jedes Element zählt nur einmal, egal wie oft es aufgeschrieben ist.',
+    solution: `<p>In einer Menge zählt jedes Element nur einmal. Die verschiedenen Elemente sind ${m(setH(order, f))}, also ${m(`|${I('M')}| = ${order.length}`)}.</p>`
+  };
+}
 
-            if (isCorrect) {
-                alert('Correct! Great job with set operations.');
-                checkBtn.style.display = 'none';
-                nextBtn.style.display = 'inline-block';
-            } else {
-                alert('Incorrect. Analyze the formula again: which operation should you start with, considering the parentheses?');
-            }
-        });
+function gRules() {
+  const POOL = [
+    ['M ∖ ∅', 0, 'Aus M wird nichts entfernt.'],
+    ['M ∪ ∅', 0, 'Es kommt nichts dazu.'],
+    ['M ∩ ∅', 1, 'Kein Element liegt in ∅, also auch keins in beiden Mengen.'],
+    ['M ∩ M', 0, 'Alles, was in M liegt, liegt auch in M.'],
+    ['M ∪ M', 0, 'Es kommt nichts Neues dazu.'],
+    ['M ∖ M', 1, 'Alle Elemente werden entfernt.'],
+    ['∅ ∖ M', 1, 'Aus der leeren Menge lässt sich nichts entfernen.'],
+    ['M × ∅', 1, 'Für die zweite Komponente gibt es keinen Kandidaten, also kein einziges Paar.'],
+    ['∅ × M', 1, 'Für die erste Komponente gibt es keinen Kandidaten, also kein einziges Paar.'],
+  ];
+  const p = pick(POOL);
+  return {
+    topic: 'Rechenregeln', title: 'Rechenregeln',
+    prompt: `<p>Ordne zu:</p><p>Für jede Menge gilt:</p>`,
+    w: dragWidget(m(vars(p[0]) + ' ='), [m(I('M')), m('∅')], p[1]),
+    hint: 'Zieh die richtige Antwort in das Feld (oder tippe sie an). Im Test zählt die Frage ohne Ziehen als unbeantwortet, auch wenn die Antwort schon an der richtigen Stelle zu stehen scheint.',
+    solution: `<p>${m(vars(p[0]) + ' = ' + (p[1] ? '∅' : I('M')))}: ${vars(p[2])}</p>`
+  };
+}
 
-        nextBtn.addEventListener('click', loadNewTask);
-        loadNewTask();
-    </script>
+/* ---------- Bereiche ---------- */
+const MODS = [
+  { id: 'mengen', code: '1.1-1', name: 'Mengendefinitionen',
+    build: () => {
+      const ds = makeDefSets();
+      return shuffle([...sample(range(0, 6), 3).map(i => () => gSetBuilder(ds, i)), gSubset,
+        ...sample([gRational, gClassify, gDescriptions, gOps, gChain, gInfinite], 4)]);
+    } },
+  { id: 'verknuepfungen', code: '1.1-2', name: 'Mengenverknüpfungen',
+    build: () => shuffle([gVennToExpr, gVennToExpr, gExprToVenn, gExprToVenn, gExprToVenn, () => gComplement('e2d'), () => gComplement('e2d'), () => gComplement('d2e')]) },
+  { id: 'produkt', code: '1.1-3', name: 'Kartesisches Produkt & Mächtigkeit',
+    build: () => {
+      const cs = makeCardSets();
+      return shuffle([gProductMC, gProductMC, gProductCombined, () => gCardProduct(cs), () => gCardUnion(cs), gCardDup, gCardDup, gRules]);
+    } },
+  { id: 'gemischt', code: '1.1-1 bis 1.1-3', name: 'Gemischte Runde',
+    build: () => shuffle([...MODS[0].build().slice(0, 3), ...MODS[1].build().slice(0, 3), ...MODS[2].build().slice(0, 3)]) },
+  { id: 'extra', code: 'Extra', name: 'Ausmalen & Rechnen',
+    build: () => shuffle([gShade, gShade, gShade, gShade, gShade, gConcrete, gConcrete, gConcrete]) },
+];
 
+// Für automatische Tests ohne Browser
+if (typeof document === 'undefined') { globalThis.MengenTrainer = { MODS, parseSet }; return; }
+
+const CHEAT = {
+  mengen: `<section><h4>Mengen</h4><ul>
+      <li>Jedes Element zählt nur einmal, die Reihenfolge ist egal: ${m('{ 1, 2, 2 } = { 2, 1 }')}.</li>
+      <li>${m('{ ' + I('x') + ' ∈ ' + I('A') + ' | Bedingung }')}: alle ${m(I('x'))} aus ${m(I('A'))}, die die Bedingung erfüllen. „oder“ heißt: mindestens eine Bedingung stimmt.</li>
+      <li>${m(I('B') + ' ⊆ ' + I('A'))}: jedes Element von ${m(I('B'))} liegt in ${m(I('A'))}. ${m(I('B') + ' ⊂ ' + I('A'))}: zusätzlich ${m(I('B') + ' ≠ ' + I('A'))}.</li>
+      <li>Immer gilt ${m('∅ ⊆ ' + I('A'))} und ${m(I('A') + ' ⊆ ' + I('A'))}, aber nie ${m(I('A') + ' ⊂ ' + I('A'))}.</li>
+    </ul></section>
+    <section><h4>Zahlenmengen</h4><ul>
+      <li>${m('ℕ = { 1, 2, 3, … }')}: positive ganze Zahlen</li>
+      <li>${m('ℤ = { …, −2, −1, 0, 1, 2, … }')}: ganze Zahlen</li>
+      <li>${m('ℚ')}: Bruchzahlen mit ganzen Zahlen in Zähler und Nenner, also endliche und periodische Dezimalzahlen</li>
+      <li>${m('ℝ')}: rationale und irrationale Zahlen wie √2, π, e</li>
+      <li>${m('ℝ → ℚ → ℤ → ℕ')}, also ${m('ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ')}</li>
+      <li>√n ist genau dann rational, wenn n eine Quadratzahl ist.</li>
+      <li>Zwischen zwei verschiedenen Zahlen liegen unendlich viele rationale und reelle Zahlen, aber nur endlich viele ganze.</li>
+    </ul></section>`,
+  verknuepfungen: `<section><h4>Verknüpfungen</h4><ul>
+      <li>${m(I('A') + ' ∩ ' + I('B'))}: in ${m(I('A'))} <b>und</b> in ${m(I('B'))}</li>
+      <li>${m(I('A') + ' ∪ ' + I('B'))}: in ${m(I('A'))} <b>oder</b> in ${m(I('B'))} (oder in beiden)</li>
+      <li>${m(I('A') + ' ∖ ' + I('B'))}: in ${m(I('A'))}, aber <b>nicht</b> in ${m(I('B'))}. Achtung: ${m(I('A') + ' ∖ ' + I('B') + ' ≠ ' + I('B') + ' ∖ ' + I('A'))}</li>
+      <li>Klammern zuerst ausrechnen.</li>
+    </ul></section>
+    <section><h4>Komplement und Venn-Diagramme</h4><ul>
+      <li>${m(I('C') + '<sub>' + I('G') + '</sub>(' + I('M') + ') = ' + I('G') + ' ∖ ' + I('M'))}, nur für ${m(I('M') + ' ⊆ ' + I('G'))}</li>
+      <li>${m('<span class="bar">' + I('M') + '</span>')}: Komplement von ${m(I('M'))}</li>
+      <li>Zweimal Komplement ergibt wieder die Ausgangsmenge.</li>
+      <li>Drei Kreise haben 7 Bereiche. Prüfe jeden Bereich einzeln: Liegt er im Ergebnis?</li>
+    </ul></section>`,
+  produkt: `<section><h4>Kartesisches Produkt</h4><ul>
+      <li>${m(I('A') + ' × ' + I('B') + ' = { (' + I('a') + ', ' + I('b') + ') | ' + I('a') + ' ∈ ' + I('A') + ', ' + I('b') + ' ∈ ' + I('B') + ' }')}</li>
+      <li>Geordnete Paare: ${m('(1, ' + I('a') + ') ≠ (' + I('a') + ', 1)')}, also meist ${m(I('A') + ' × ' + I('B') + ' ≠ ' + I('B') + ' × ' + I('A'))}</li>
+      <li>${m(I('M') + ' × ∅ = ∅')}</li>
+    </ul></section>
+    <section><h4>Mächtigkeit</h4><ul>
+      <li>${m('|' + I('A') + '|')} = Anzahl der verschiedenen Elemente: ${m('|{ 1, 1, 2 }| = 2')}</li>
+      <li>${m('|' + I('A') + ' × ' + I('B') + '| = |' + I('A') + '| · |' + I('B') + '|')}</li>
+      <li>${m('|' + I('A') + ' ∪ ' + I('B') + '| = |' + I('A') + '| + |' + I('B') + '| − |' + I('A') + ' ∩ ' + I('B') + '|')}</li>
+      <li>${m(I('M') + ' ∪ ∅ = ' + I('M'))}, ${m(I('M') + ' ∩ ∅ = ∅')}, ${m(I('M') + ' ∖ ∅ = ' + I('M'))}, ${m(I('M') + ' ∖ ' + I('M') + ' = ∅')}</li>
+    </ul></section>`
+};
+CHEAT.gemischt = CHEAT.mengen + CHEAT.verknuepfungen + CHEAT.produkt;
+CHEAT.extra = CHEAT.verknuepfungen;
+
+/* ---------- Bestwerte (nur im eigenen Browser) ---------- */
+const KEY = 'mengenlehre-trainer:v2';
+function loadStats() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+function saveStats(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) { /* ohne Speicher geht es auch */ } }
+
+/* ---------- Ablauf ---------- */
+document.documentElement.lang = 'de';
+const $ = s => document.querySelector(s);
+const stage = $('#stage');
+let S = null;
+
+function renderTabs() {
+  const st = loadStats();
+  $('#tabs').innerHTML = MODS.map(md => {
+    const b = st[md.id];
+    return `<a class="tab" href="#${md.id}"${S && S.mod === md ? ' aria-current="page"' : ''}>
+      <span class="code">${md.code}</span><span class="name">${md.name}</span>
+      <span class="best">${b ? `Bestwert ${de(b.best)} von ${b.n}` : 'noch nicht geübt'}</span></a>`;
+  }).join('');
+}
+function renderCheat() {
+  $('#cheatTitle').textContent = 'Spickzettel: ' + S.mod.name;
+  $('#cheatBody').innerHTML = CHEAT[S.mod.id];
+}
+const cls = p => p === 1 ? 'ok' : p > 0 ? 'part' : 'bad';
+function renderBar() {
+  const n = S.qs.length, done = S.pts.length;
+  const total = S.pts.reduce((a, b) => a + b, 0);
+  $('#rbCount').textContent = S.idx < n ? `Frage ${S.idx + 1} von ${n}` : 'Auswertung';
+  $('#rbScore').textContent = `${de(total)} ${total === 1 ? 'Punkt' : 'Punkte'}`;
+  $('#dots').innerHTML = S.qs.map((_, i) => `<li class="${i < done ? cls(S.pts[i]) : i === S.idx ? 'cur' : ''}"></li>`).join('');
+}
+
+function start(id) {
+  const mod = MODS.find(x => x.id === id) || MODS[0];
+  S = { mod, qs: mod.build().map(g => g()), idx: 0, pts: [], checked: false };
+  renderTabs(); renderCheat(); renderQ();
+}
+
+function renderQ() {
+  const q = S.qs[S.idx];
+  S.checked = false;
+  stage.innerHTML = `<article class="sheet" aria-labelledby="qt">
+    <div class="q-meta"><span class="eyebrow">${q.topic}</span><span>Frage ${S.idx + 1} von ${S.qs.length} (1 Punkt)</span></div>
+    <h2 id="qt">${q.title}</h2>
+    ${q.givens ? `<div class="givens">${q.givens}</div>` : ''}
+    <div class="prompt">${q.prompt}</div>
+    <form id="qf" novalidate>
+      ${q.w.html}
+      <p class="hint" id="hint" hidden>${q.hint}</p>
+      <div class="actions">
+        <button type="button" class="btn ghost" id="hintBtn" aria-expanded="false" aria-controls="hint">Tipp anzeigen</button>
+        <button type="submit" class="btn primary" id="go">Prüfen</button>
+      </div>
+    </form>
+    <section class="feedback solution" id="fb" hidden aria-live="polite"></section>
+  </article>`;
+  drawCanvases(stage);
+  if (q.w.mount) q.w.mount(stage);
+  renderBar();
+  $('#hintBtn').addEventListener('click', e => {
+    const h = $('#hint'); h.hidden = !h.hidden;
+    e.currentTarget.setAttribute('aria-expanded', String(!h.hidden));
+    e.currentTarget.textContent = h.hidden ? 'Tipp anzeigen' : 'Tipp ausblenden';
+  });
+  $('#qf').addEventListener('submit', e => { e.preventDefault(); S.checked ? next() : check(); });
+}
+
+function check() {
+  const q = S.qs[S.idx];
+  const p = Math.round(q.w.grade(stage) * 100) / 100;
+  S.pts[S.idx] = p; S.checked = true;
+  stage.querySelectorAll('#qf input, #qf select').forEach(x => { x.disabled = true; });
+  const c = cls(p);
+  const fb = $('#fb');
+  fb.innerHTML = `<div class="verdict v-${c}"><strong>${c === 'ok' ? 'Richtig!' : c === 'part' ? 'Teilweise richtig.' : 'Leider nicht richtig.'}</strong><span>Du hast ${de(p)} von 1 möglichen Punkt erreicht.</span></div>
+    ${q.w.review ? q.w.review() : ''}
+    <h3>Musterlösung und Erklärung</h3>${q.solution}`;
+  fb.hidden = false;
+  drawCanvases(fb);
+  const go = $('#go');
+  go.textContent = S.idx === S.qs.length - 1 ? 'Zur Auswertung' : 'Nächste Frage';
+  go.focus({ preventScroll: true });
+  renderBar();
+}
+
+function next() {
+  S.idx++;
+  if (S.idx >= S.qs.length) renderEnd(); else renderQ();
+  if (stage.getBoundingClientRect().top < 0) {
+    stage.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }
+}
+
+function renderEnd() {
+  const n = S.qs.length, total = S.pts.reduce((a, b) => a + b, 0), share = total / n;
+  const st = loadStats(), prev = st[S.mod.id];
+  st[S.mod.id] = { best: Math.max(total, prev ? prev.best : 0), n, rounds: (prev ? prev.rounds : 0) + 1 };
+  saveStats(st);
+  const weak = uniq(S.qs.filter((_, i) => S.pts[i] < 1).map(q => q.topic));
+  stage.innerHTML = `<article class="sheet">
+    <p class="eyebrow">Auswertung · ${S.mod.name}</p>
+    <p class="score"><span class="big">${de(total)}</span>von ${n} Punkten</p>
+    <p>${share >= .875 ? 'Sehr gut, das sitzt.' : share >= .6 ? 'Solide. Schau dir die Themen mit Punktverlust noch einmal an.' : 'Hier lohnt sich noch Übung. Lies den Spickzettel und versuch eine neue Runde.'}
+      ${weak.length ? `Noch üben: <b>${weak.join(', ')}</b>.` : ''}</p>
+    <ol class="review">${S.qs.map((q, i) => `<li class="r-${cls(S.pts[i])}"><span>${q.title}</span><span class="r-pts">${de(S.pts[i])}</span><span class="r-topic">${q.topic}</span></li>`).join('')}</ol>
+    <div class="actions"><button type="button" class="btn primary" id="again">Neue Runde mit neuen Aufgaben</button></div>
+  </article>`;
+  renderBar(); renderTabs();
+  $('#again').addEventListener('click', () => start(S.mod.id));
+}
+
+function route() {
+  const id = location.hash.slice(1);
+  const mod = MODS.find(x => x.id === id) || MODS[0];
+  if (!S || S.mod !== mod) start(mod.id);
+}
+$('#newRound').addEventListener('click', () => start(S.mod.id));
+window.addEventListener('hashchange', route);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => drawCanvases(document));
+new MutationObserver(() => drawCanvases(document)).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => drawCanvases(document));
+route();
+})();
+</script>
 </body>
 </html>

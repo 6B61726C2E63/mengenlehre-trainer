@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Set Theory Trainer - 3 Sets</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+        .task-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .formula {
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            background: #f4f4f4;
+            padding: 15px 30px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        svg {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="task-container">
+        <h2 id="task-name">Shade the region for the formula:</h2>
+        <div class="formula" id="task-formula">Generating...</div>
+    </div>
+
+    <svg viewBox="0 0 300 300" width="400" height="400" id="venn-svg">
+        <defs>
+            <circle id="circA" cx="120" cy="120" r="70" />
+            <circle id="circB" cx="180" cy="120" r="70" />
+            <circle id="circC" cx="150" cy="172" r="70" />
+
+            <clipPath id="clipA"><circle cx="120" cy="120" r="70" /></clipPath>
+            <clipPath id="clipB"><circle cx="180" cy="120" r="70" /></clipPath>
+            <clipPath id="clipC"><circle cx="150" cy="172" r="70" /></clipPath>
+
+            <mask id="m-a">
+                <use href="#circA" fill="white" />
+                <use href="#circB" fill="black" />
+                <use href="#circC" fill="black" />
+            </mask>
+            <mask id="m-b">
+                <use href="#circB" fill="white" />
+                <use href="#circA" fill="black" />
+                <use href="#circC" fill="black" />
+            </mask>
+            <mask id="m-c">
+                <use href="#circC" fill="white" />
+                <use href="#circA" fill="black" />
+                <use href="#circB" fill="black" />
+            </mask>
+            <mask id="m-ab">
+                <rect width="100%" height="100%" fill="black" />
+                <use href="#circA" fill="white" clip-path="url(#clipB)" />
+                <use href="#circC" fill="black" />
+            </mask>
+            <mask id="m-ac">
+                <rect width="100%" height="100%" fill="black" />
+                <use href="#circA" fill="white" clip-path="url(#clipC)" />
+                <use href="#circB" fill="black" />
+            </mask>
+            <mask id="m-bc">
+                <rect width="100%" height="100%" fill="black" />
+                <use href="#circB" fill="white" clip-path="url(#clipC)" />
+                <use href="#circA" fill="black" />
+            </mask>
+            <mask id="m-abc">
+                <rect width="100%" height="100%" fill="black" />
+                <g clip-path="url(#clipC)">
+                    <use href="#circA" fill="white" clip-path="url(#clipB)" />
+                </g>
+            </mask>
+        </defs>
+
+        <rect id="region-u" x="5" y="5" width="290" height="290" rx="10" fill="#e0e0e0" stroke="#333" stroke-width="2" />
+        
+        <rect id="region-a" width="300" height="300" fill="#e0e0e0" mask="url(#m-a)" />
+        <rect id="region-b" width="300" height="300" fill="#e0e0e0" mask="url(#m-b)" />
+        <rect id="region-c" width="300" height="300" fill="#e0e0e0" mask="url(#m-c)" />
+        <rect id="region-ab" width="300" height="300" fill="#e0e0e0" mask="url(#m-ab)" />
+        <rect id="region-ac" width="300" height="300" fill="#e0e0e0" mask="url(#m-ac)" />
+        <rect id="region-bc" width="300" height="300" fill="#e0e0e0" mask="url(#m-bc)" />
+        <rect id="region-abc" width="300" height="300" fill="#e0e0e0" mask="url(#m-abc)" />
+
+        <use href="#circA" fill="none" stroke="#333" stroke-width="2" />
+        <use href="#circB" fill="none" stroke="#333" stroke-width="2" />
+        <use href="#circC" fill="none" stroke="#333" stroke-width="2" />
+
+        <text x="80" y="80" font-size="20" font-weight="bold" pointer-events="none">A</text>
+        <text x="210" y="80" font-size="20" font-weight="bold" pointer-events="none">B</text>
+        <text x="143" y="260" font-size="20" font-weight="bold" pointer-events="none">C</text>
+        <text x="15" y="25" font-size="16" font-style="italic" pointer-events="none">U</text>
+    </svg>
+
+    <div class="controls">
+        <button id="check-btn">Check</button>
+        <button id="next-btn" style="display: none;">Generate new task</button>
+    </div>
+
+    <script>
+        function generateTask() {
+            const vars = ['A', 'B', 'C'].sort(() => 0.5 - Math.random());
+            const ops = ['∪', '∩', '\\', 'Δ'];
+
+            const op1 = ops[Math.floor(Math.random() * ops.length)];
+            const op2 = ops[Math.floor(Math.random() * ops.length)];
+
+            const comp = v => Math.random() > 0.7 ? `${v}^c` : v;
+            const v1 = comp(vars[0]);
+            const v2 = comp(vars[1]);
+            const v3 = comp(vars[2]);
+
+            let formula = '';
+            let evaluate = null;
+
+            const applyOp = (val1, val2, op) => {
+                if (op === '∪') return val1 || val2;
+                if (op === '∩') return val1 && val2;
+                if (op === '\\') return val1 && !val2;
+                if (op === 'Δ') return val1 !== val2;
+            };
+
+            const getVal = (vStr, a, b, c) => {
+                let base = vStr.replace('^c', '');
+                let val = base === 'A' ? a : (base === 'B' ? b : c);
+                return vStr.includes('^c') ? !val : val;
+            };
+
+            if (Math.random() > 0.5) {
+                formula = `(${v1} ${op1} ${v2}) ${op2} ${v3}`;
+                evaluate = (a, b, c) => {
+                    return applyOp(applyOp(getVal(v1, a,b,c), getVal(v2, a,b,c), op1), getVal(v3, a,b,c), op2);
+                };
+            } else {
+                formula = `${v1} ${op1} (${v2} ${op2} ${v3})`;
+                evaluate = (a, b, c) => {
+                    return applyOp(getVal(v1, a,b,c), applyOp(getVal(v2, a,b,c), getVal(v3, a,b,c), op2), op1);
+                };
+            }
+
+            if (Math.random() > 0.8) {
+                formula = `(${formula})^c`;
+                const oldEval = evaluate;
+                evaluate = (a, b, c) => !oldEval(a, b, c);
+            }
+
+            return { formula, evaluate };
+        }
+
+        let state = { u: false, a: false, b: false, c: false, ab: false, ac: false, bc: false, abc: false };
+        let currentTask = null;
+
+        const svg = document.getElementById('venn-svg');
+
+        function getRegion(e) {
+            const pt = svg.createSVGPoint();
+            pt.x = e.clientX;
+            pt.y = e.clientY;
+            const cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
+
+            if (cursor.x < 5 || cursor.x > 295 || cursor.y < 5 || cursor.y > 295) return null;
+
+            const r = 70;
+            const inA = Math.hypot(cursor.x - 120, cursor.y - 120) <= r;
+            const inB = Math.hypot(cursor.x - 180, cursor.y - 120) <= r;
+            const inC = Math.hypot(cursor.x - 150, cursor.y - 172) <= r;
+
+            if (!inA && !inB && !inC) return 'u';
+            if (inA && !inB && !inC) return 'a';
+            if (!inA && inB && !inC) return 'b';
+            if (!inA && !inB && inC) return 'c';
+            if (inA && inB && !inC) return 'ab';
+            if (inA && !inB && inC) return 'ac';
+            if (!inA && inB && inC) return 'bc';
+            if (inA && inB && inC) return 'abc';
+            return null;
+        }
+
+        function updateVisuals(hoveredRegion = null) {
+            Object.keys(state).forEach(id => {
+                const rect = document.getElementById(`region-${id}`);
+                const isActive = state[id];
+                const isHovered = id === hoveredRegion;
+                
+                if (isActive) {
+                    rect.setAttribute('fill', isHovered ? '#3a7bc2' : '#4a90e2');
+                } else {
+                    rect.setAttribute('fill', isHovered ? '#c0c0c0' : '#e0e0e0');
+                }
+            });
+        }
+
+        svg.addEventListener('click', (e) => {
+            const regionId = getRegion(e);
+            if (!regionId) return;
+            state[regionId] = !state[regionId];
+            updateVisuals(regionId);
+        });
+
+        svg.addEventListener('mousemove', (e) => updateVisuals(getRegion(e)));
+        svg.addEventListener('mouseleave', () => updateVisuals(null));
+
+        const taskFormulaEl = document.getElementById('task-formula');
+        const checkBtn = document.getElementById('check-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        function loadNewTask() {
+            currentTask = generateTask();
+            taskFormulaEl.textContent = currentTask.formula;
+            
+            Object.keys(state).forEach(key => state[key] = false);
+            updateVisuals();
+            
+            checkBtn.style.display = 'inline-block';
+            nextBtn.style.display = 'none';
+        }
+
+        checkBtn.addEventListener('click', function() {
+            const correct = {
+                u: currentTask.evaluate(false, false, false),
+                a: currentTask.evaluate(true, false, false),
+                b: currentTask.evaluate(false, true, false),
+                c: currentTask.evaluate(false, false, true),
+                ab: currentTask.evaluate(true, true, false),
+                ac: currentTask.evaluate(true, false, true),
+                bc: currentTask.evaluate(false, true, true),
+                abc: currentTask.evaluate(true, true, true)
+            };
+
+            const isCorrect = Object.keys(state).every(key => state[key] === correct[key]);
+
+            if (isCorrect) {
+                alert('Correct! Great job with set operations.');
+                checkBtn.style.display = 'none';
+                nextBtn.style.display = 'inline-block';
+            } else {
+                alert('Incorrect. Analyze the formula again: which operation should you start with, considering the parentheses?');
+            }
+        });
+
+        nextBtn.addEventListener('click', loadNewTask);
+        loadNewTask();
+    </script>
+
+</body>
+</html>
